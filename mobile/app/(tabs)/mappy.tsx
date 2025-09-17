@@ -1,39 +1,40 @@
 import { View, Text, Image, ScrollView, TextInput, TouchableOpacity, FlatList } from "react-native";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import Swiper from "react-native-deck-swiper";
 import { LinearGradient } from "expo-linear-gradient";
 
 export default function HomeScreen() {
-  const trips = [
-    {
-      id: "1",
-      country: "Brazil",
-      city: "Rio de Janeiro",
-      image: "https://picsum.photos/id/1015/600/400",
-      rating: "5.0",
-      reviews: "143",
-    },
-    {
-      id: "2",
-      country: "Japan",
-      city: "Tokyo",
-      image: "https://picsum.photos/id/1011/600/400",
-      rating: "4.9",
-      reviews: "210",
-    },
-    {
-      id: "3",
-      country: "France",
-      city: "Paris",
-      image: "https://picsum.photos/id/1018/600/400",
-      rating: "4.8",
-      reviews: "320",
-    },
-  ];
+  const trips = useMemo(
+    () => [
+      {
+        image: "https://picsum.photos/500/700",
+        country: "Japan",
+        city: "Tokyo",
+        rating: "4.8",
+        reviews: 120,
+      },
+      {
+        image: "https://picsum.photos/500/701",
+        country: "Italy",
+        city: "Rome",
+        rating: "4.7",
+        reviews: 89,
+      },
+      {
+        image: "https://picsum.photos/500/702",
+        country: "USA",
+        city: "New York",
+        rating: "4.9",
+        reviews: 200,
+      },
+    ],
+    []
+  );
 
   const [cards, setCards] = useState(trips);
+  const [cardIndex, setCardIndex] = useState(0);
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -79,14 +80,18 @@ export default function HomeScreen() {
 
         <Swiper
           cards={cards}
-          cardStyle={{
-            width: "95%",
-            alignSelf: "center",
-          }}
+          cardIndex={cardIndex} // ✅ use state instead of hard-coded
+          onSwiped={(index) => setCardIndex(index + 1)}
+          onSwipedAll={() => console.log("All cards swiped!")}
+          stackSize={3}
+          backgroundColor="transparent"
+          infinite={true} // loop cards
+          animateCardOpacity={false} // ✅ reduce glitch
+          cardStyle={{ width: "90%", alignSelf: "center" }}
           renderCard={(item) => {
             if (!item) return null;
             return (
-              <View className="top-52 h-[420px] align-middle rounded-3xl shadow-lg overflow-hidden">
+              <View className="top-52 w-full h-[420px] rounded-3xl shadow-lg overflow-hidden">
                 {/* Full Image */}
                 <Image source={{ uri: item.image }} className="w-full h-full" resizeMode="cover" />
 
@@ -98,7 +103,7 @@ export default function HomeScreen() {
                 {/* Gradient + Info */}
                 <LinearGradient
                   colors={["transparent", "rgba(0,0,0,0.7)"]}
-                  style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: 0, height: 200 }}
+                  style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 200 }}
                 >
                   <View className="absolute bottom-0 p-4 w-full">
                     <Text className="text-white text-sm">{item.country}</Text>
@@ -110,22 +115,17 @@ export default function HomeScreen() {
                     </View>
 
                     {/* Button */}
-                    <TouchableOpacity className="flex-row items-center justify-between bg-white rounded-full px-4 py-2 mt-3">
-                      <Text className="text-black font-semibold text-center">See more</Text>
-                      <Ionicons name="arrow-forward" size={18} color="#111" />
+                    <TouchableOpacity className="flex-row items-center justify-between bg-white/20 backdrop-blur-md rounded-full px-5 py-2.5 mt-3 shadow-md">
+                      <Text className="text-white font-semibold text-base">See more</Text>
+                      <View className="bg-white/30 rounded-full p-1.5 ml-2">
+                        <Ionicons name="chevron-forward" size={18} color="#fff" />
+                      </View>
                     </TouchableOpacity>
                   </View>
                 </LinearGradient>
               </View>
             );
           }}
-          // onSwiped={(cardIndex) => console.log("Swiped:", cardIndex)}
-          // onSwipedAll={() => console.log("All cards swiped!")}
-          stackSize={3}
-          backgroundColor="transparent"
-          cardIndex={0}
-          infinite={false}
-          animateCardOpacity
         />
       </ScrollView>
     </SafeAreaView>
