@@ -1,4 +1,4 @@
-import { Tabs } from "expo-router";
+import { Redirect, Tabs, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { View } from "react-native";
 
@@ -11,7 +11,13 @@ const TabIcon = ({ focused, icon }: any) => (
   </View>
 );
 
-export default function Layout() {
+export default function TabsLayout() {
+  const router = useRouter();
+  // Replace this with your actual authentication logic
+  const isAuthenticated = false; // Example: change to false to test redirection
+  if (!isAuthenticated) {
+    return <Redirect href={"/(auth)"} />;
+  }
   return (
     <Tabs
       screenOptions={{
