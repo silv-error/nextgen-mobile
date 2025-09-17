@@ -8,12 +8,7 @@ const LandingPage = () => {
 
   return (
     <SafeAreaView>
-      <TouchableOpacity onPress={() => router.push("/(pages)/business/123")}>
-        <Text>Go to Business</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => router.push("/(pages)/mappy")}>
-        <Text>Go to Mappy</Text>
-      </TouchableOpacity>
+      <Text>Landing Page</Text>
     </SafeAreaView>
   );
 };
