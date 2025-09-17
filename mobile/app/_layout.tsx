@@ -1,13 +1,12 @@
-// app/_layout.tsx
-import { Stack, useNavigation } from "expo-router";
+// app/_layout.js
+import { Stack } from "expo-router";
+import "@/global.css";
 
 export default function RootLayout() {
   return (
-    <Stack>
-      <Stack.Screen name="(pages)/index" />
-      <Stack.Screen name="(pages)/map" />
-      <Stack.Screen name="(pages)/suggestion" options={{ title: "Suggestion" }} />
-      <Stack.Screen name="(pages)/profile" options={{ title: "Profile" }} />
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="(pages)" />
+      <Stack.Screen name="(tabs)" />
     </Stack>
   );
 }
