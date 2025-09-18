@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import MapView, { Marker } from "react-native-maps";
 import { StyleSheet, View } from "react-native";
 import { useLocalSearchParams } from "expo-router";
@@ -6,22 +6,31 @@ import { useLocalSearchParams } from "expo-router";
 export default function MapScreen() {
   const { latitude, longitude, title, description } = useLocalSearchParams();
 
-  // Convert string params to numbers
-  const lat = parseFloat(latitude as string);
-  const lng = parseFloat(longitude as string);
+  let lat = parseFloat(latitude as string);
+  let lng = parseFloat(longitude as string);
+
+  const [region, setRegion] = useState({
+    latitude: lat || 0,
+    longitude: lng || 0,
+    latitudeDelta: 0.05,
+    longitudeDelta: 0.05,
+  });
+
+  useEffect(() => {
+    if (!isNaN(lat) && !isNaN(lng)) {
+      setRegion({
+        latitude: lat,
+        longitude: lng,
+        latitudeDelta: 0.05,
+        longitudeDelta: 0.05,
+      });
+    }
+  }, [lat, lng]);
 
   return (
     <View style={styles.container}>
-      {latitude && longitude ? (
-        <MapView
-          style={styles.map}
-          initialRegion={{
-            latitude: lat,
-            longitude: lng,
-            latitudeDelta: 0.05,
-            longitudeDelta: 0.05,
-          }}
-        >
+      {!isNaN(lat) && !isNaN(lng) ? (
+        <MapView style={styles.map} region={region}>
           <Marker
             coordinate={{ latitude: lat, longitude: lng }}
             title={title as string}
@@ -29,7 +38,7 @@ export default function MapScreen() {
           />
         </MapView>
       ) : (
-        <MapView style={styles.map} />
+        <MapView style={styles.map}></MapView>
       )}
     </View>
   );

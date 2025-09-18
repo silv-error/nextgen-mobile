@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import Swiper from "react-native-deck-swiper";
 import { LinearGradient } from "expo-linear-gradient";
+import { useNavigation, useRouter } from "expo-router";
 
 export default function HomeScreen() {
   const trips = useMemo(
@@ -35,6 +36,7 @@ export default function HomeScreen() {
 
   const [cards, setCards] = useState(trips);
   const [cardIndex, setCardIndex] = useState(0);
+  const router = useRouter();
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -49,11 +51,11 @@ export default function HomeScreen() {
         </View>
 
         {/* Search Bar */}
-        <View className="flex-row items-center bg-gray-100 rounded-full px-4 py-3 mt-5">
+        <View className="flex-row items-center bg-gray-100 rounded-full pl-4 pr-1 py-1 mt-5">
           <Ionicons name="search" size={20} color="#666" />
           <TextInput placeholder="Search" placeholderTextColor="#999" className="flex-1 ml-2 text-gray-700" />
           <TouchableOpacity className="bg-secondary rounded-full p-2">
-            <Ionicons name="options-outline" size={18} color="white" />
+            <Ionicons name="options-outline" size={32} color="white" />
           </TouchableOpacity>
         </View>
 
@@ -63,22 +65,28 @@ export default function HomeScreen() {
         {/* Tabs */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mt-3">
           <TouchableOpacity className="bg-gray-100 px-5 py-2 rounded-full mr-2">
-            <Text className="text-gray-600 font-medium">Asia</Text>
+            <Text className="text-gray-600 font-medium">Sightseeing</Text>
           </TouchableOpacity>
           <TouchableOpacity className="bg-gray-100 px-5 py-2 rounded-full mr-2">
-            <Text className="text-gray-600 font-medium">Europe</Text>
+            <Text className="text-gray-600 font-medium">Hiking</Text>
           </TouchableOpacity>
           <TouchableOpacity className="bg-secondary px-5 py-2 rounded-full mr-2">
-            <Text className="text-white font-medium">South America</Text>
+            <Text className="text-white font-medium">Beach</Text>
+          </TouchableOpacity>
+          <TouchableOpacity className="bg-gray-100 px-5 py-2 rounded-full mr-2">
+            <Text className="text-gray-600 font-medium">Food Tours</Text>
+          </TouchableOpacity>
+          <TouchableOpacity className="bg-gray-100 px-5 py-2 rounded-full mr-2">
+            <Text className="text-gray-600 font-medium">Museums</Text>
           </TouchableOpacity>
           <TouchableOpacity className="bg-gray-100 px-5 py-2 rounded-full">
-            <Text className="text-gray-600 font-medium">Africa</Text>
+            <Text className="text-gray-600 font-medium">Wildlife Safari</Text>
           </TouchableOpacity>
         </ScrollView>
 
         {/* Trip Cards (Horizontal Scroll) */}
 
-        <View className="h-[400px]">
+        <View className="h-[400px] -mt-10">
           <Swiper
             cards={cards}
             cardIndex={cardIndex} // ✅ use state instead of hard-coded
@@ -92,13 +100,13 @@ export default function HomeScreen() {
             renderCard={(item) => {
               if (!item) return null;
               return (
-                <View className="w-full h-[420px] rounded-3xl shadow-lg overflow-hidden">
+                <View className="w-full h-[420px] rounded-[20px] shadow-lg overflow-hidden">
                   {/* Full Image */}
                   <Image source={{ uri: item.image }} className="w-full h-full" resizeMode="cover" />
 
                   {/* Floating Heart */}
-                  <TouchableOpacity className="absolute top-3 right-3 bg-white/90 rounded-full p-2">
-                    <Ionicons name="heart-outline" size={20} color="#111" />
+                  <TouchableOpacity className="absolute top-3 right-3 bg-white/30 rounded-full p-2">
+                    <Ionicons name="heart-outline" size={25} color="white" />
                   </TouchableOpacity>
 
                   {/* Gradient + Info */}
@@ -116,9 +124,19 @@ export default function HomeScreen() {
                       </View>
 
                       {/* Button */}
-                      <TouchableOpacity className="flex-row items-center justify-between bg-white/20 backdrop-blur-md rounded-full px-5 py-2.5 mt-3 shadow-md">
-                        <Text className="text-white font-semibold text-base">See more</Text>
-                        <View className="bg-white/30 rounded-full p-1.5 ml-2">
+                      <TouchableOpacity
+                        className="flex-row items-center h-14 bg-white/20 backdrop-blur-md rounded-full mt-3 shadow-md"
+                        onPress={() => {
+                          router.push({
+                            pathname: "/(tabs)/suggestion",
+                            params: {
+                              country: item?.country,
+                            },
+                          });
+                        }}
+                      >
+                        <Text className="text-white relative mx-auto font-semibold text-base">See more</Text>
+                        <View className="bg-white/30 absolute flex justify-center items-center right-0 rounded-full p-1.5 h-14 w-14">
                           <Ionicons name="chevron-forward" size={18} color="#fff" />
                         </View>
                       </TouchableOpacity>

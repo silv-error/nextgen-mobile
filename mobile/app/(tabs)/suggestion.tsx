@@ -2,21 +2,31 @@ import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import React from "react";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { Navigation } from "lucide-react-native";
 
 export default function TravelPage() {
+  const router = useRouter();
   const insets = useSafeAreaInsets();
-  return (
-    <SafeAreaView className="flex-1 bg-white" style={{ paddingBottom: insets.bottom + 40 }}>
-      {/* Scrollable Page */}
-      <ScrollView showsVerticalScrollIndicator={false} className="bg-gray-50">
-        {/* Header Image */}
-        <View className="relative w-full h-72">
-          <Image source={{ uri: "https://picsum.photos/800/500" }} className="w-full h-full" />
+  const { country } = useLocalSearchParams();
+  console.log("country", country);
 
-          {/* Back Button */}
-          <TouchableOpacity className="absolute top-12 left-4 bg-white/80 rounded-full p-2">
-            <Ionicons name="arrow-back" size={22} color="#111" />
-          </TouchableOpacity>
+  return (
+    <SafeAreaView className="flex-1 bg-white">
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingBottom: insets.bottom + 80,
+        }}
+        className="bg-gray-50"
+      >
+        {/* Header Image */}
+        <View className="w-full h-72">
+          <Image
+            source={{ uri: "https://picsum.photos/800/500" }}
+            className="w-full h-full rounded-b-3xl"
+            resizeMode="cover"
+          />
 
           {/* Heart Button */}
           <TouchableOpacity className="absolute top-12 right-4 bg-white/80 rounded-full p-2">
@@ -25,7 +35,7 @@ export default function TravelPage() {
         </View>
 
         {/* Content Card */}
-        <View className="bg-white -mt-8 rounded-t-3xl p-5 shadow-lg">
+        <View className="flex-1 bg-white -mt-8 rounded-t-3xl p-5 shadow-lg">
           {/* Title + Reviews */}
           <View className="flex-row justify-between items-start">
             <View className="flex-1 pr-3">
@@ -70,11 +80,27 @@ export default function TravelPage() {
               $16.78k{"\n"}
               <Text className="text-gray-500 text-sm">Per month with Tax</Text>
             </Text>
-            <TouchableOpacity className="bg- px-8 py-3 rounded-full">
-              <Text className="text-white font-semibold text-base">Book Now</Text>
+            <TouchableOpacity
+              className="flex-row gap-2 bg-blue-600 px-6 py-3 rounded-full"
+              onPress={() =>
+                router.push({
+                  pathname: "/(tabs)/map",
+                  params: {
+                    latitude: 35.6895,
+                    longitude: 139.6917,
+                    title: "New York City",
+                    description: "The Big Apple",
+                  },
+                })
+              }
+            >
+              <Navigation size={20} color={"white"} />
+              <Text className="text-white font-semibold text-base">Directions</Text>
             </TouchableOpacity>
           </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mt-4">
+
+          {/* Activity Scroll */}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mt-6">
             {/* Card 1 */}
             <View className="w-56 mr-4 bg-white rounded-2xl shadow-md">
               <View className="relative">

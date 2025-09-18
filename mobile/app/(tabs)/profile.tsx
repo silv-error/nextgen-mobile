@@ -36,17 +36,9 @@ export default function ProfilePage() {
         scrollEnabled={true}
         showsVerticalScrollIndicator={false}
       >
-        {/* Back Arrow */}
-        <TouchableOpacity
-          onPress={() => router.back()}
-          className="absolute top-6 left-4 bg-white rounded-full p-2 shadow"
-        >
-          <Ionicons name="arrow-back" size={22} color="#111" />
-        </TouchableOpacity>
-
         {/* Header */}
         <View className="items-center mt-10">
-          <View className="w-28 h-28 rounded-full items-center justify-center border-4 border-[#3754ED] shadow-md">
+          <View className="w-28 h-28 rounded-full items-center justify-center border-4 border-secondary shadow-md">
             <Image source={{ uri: "https://avatar.iran.liara.run/public/45" }} className="w-24 h-24 rounded-full" />
           </View>
 
@@ -76,7 +68,7 @@ export default function ProfilePage() {
                 <Text className="text-gray-500 text-sm">{place.location}</Text>
                 <View className="flex-row justify-between items-center mt-3">
                   <Text className="text-gray-400 text-xs">{place.date}</Text>
-                  <TouchableOpacity className="bg-[#0097e6] px-3 py-1 rounded-full">
+                  <TouchableOpacity className="bg-secondary px-3 py-1 rounded-full">
                     <Text className="text-white text-sm font-medium">View</Text>
                   </TouchableOpacity>
                 </View>

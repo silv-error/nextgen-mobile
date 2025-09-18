@@ -10,15 +10,15 @@ export default function BusinessOwnerPage() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const location = {
-    latitude: 40.7128, // NYC latitude
-    longitude: -74.006, // NYC longitude
+    latitude: 35.6895,
+    longitude: 139.6917,
     latitudeDelta: 0.05,
     longitudeDelta: 0.05,
   };
   return (
     <SafeAreaView className="flex-1 bg-[#F7FDFF]" style={{ paddingBottom: insets.bottom + 20 }}>
       <ScrollView className="flex-1">
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={() => router.back()}
           className="absolute top-4 left-4 z-20 rounded-full p-2 bg-white/70"
           style={{
@@ -29,7 +29,7 @@ export default function BusinessOwnerPage() {
           }}
         >
           <Ionicons name="arrow-back" size={22} color="black" />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         {/* Cover Image */}
         <View className="w-full h-44">
           <Image source={{ uri: "https://picsum.photos/800/300" }} className="w-full h-full" />
@@ -54,8 +54,8 @@ export default function BusinessOwnerPage() {
                   router.push({
                     pathname: "/(tabs)/map",
                     params: {
-                      latitude: "40.7128",
-                      longitude: "-74.0060",
+                      latitude: 35.6895,
+                      longitude: 139.6917,
                       title: "New York City",
                       description: "The Big Apple",
                     },
