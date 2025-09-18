@@ -1,14 +1,22 @@
 import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import MasonryList from "@react-native-seoul/masonry-list";
-import { useRouter } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 
 export default function BusinessOwnerPage() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
+  const navigation = useNavigation();
+  const location = {
+    latitude: 40.7128, // NYC latitude
+    longitude: -74.006, // NYC longitude
+    latitudeDelta: 0.05,
+    longitudeDelta: 0.05,
+  };
   return (
-    <SafeAreaView className="flex-1 bg-[#F7FDFF]">
+    <SafeAreaView className="flex-1 bg-[#F7FDFF]" style={{ paddingBottom: insets.bottom + 20 }}>
       <ScrollView className="flex-1">
         <TouchableOpacity
           onPress={() => router.back()}
@@ -41,24 +49,41 @@ export default function BusinessOwnerPage() {
               <Text className="text-[#3754ED]">@shotbyskye</Text>
             </View>
             <View className="flex-row items-center">
-              <TouchableOpacity className="bg-[#3754ED] px-4 py-2 rounded-full mr-2">
-                <Text className="text-white font-semibold">Follow</Text>
-              </TouchableOpacity>
-              <TouchableOpacity className="bg-[#EAF0FF] p-2 rounded-full">
-                <Ionicons name="mail-outline" size={20} color="#3754ED" />
+              <TouchableOpacity
+                onPress={() =>
+                  router.push({
+                    pathname: "/(tabs)/map",
+                    params: {
+                      latitude: "40.7128",
+                      longitude: "-74.0060",
+                      title: "New York City",
+                      description: "The Big Apple",
+                    },
+                  })
+                }
+                className="flex-row items-center gap-2 justifycenter bg-secondary px-5 py-2.5 rounded-full shadow-sm border border-white/60"
+                style={{
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.1,
+                  shadowRadius: 3,
+                }}
+              >
+                <Ionicons name="locate-outline" size={18} color="white" />
+                <Text className="text-white font-semibold text-sm">Directions</Text>
               </TouchableOpacity>
             </View>
           </View>
 
           {/* Stats */}
-          <View className="flex-row mt-4">
+          {/* <View className="flex-row mt-4">
             <Text className="mr-6 text-[#080E29]">
               <Text className="font-bold">204 </Text>Following
             </Text>
             <Text className="text-[#080E29]">
               <Text className="font-bold">1.2M </Text>Followers
             </Text>
-          </View>
+          </View> */}
 
           {/* Bio */}
           <Text className="mt-3 text-gray-600">
@@ -97,7 +122,12 @@ export default function BusinessOwnerPage() {
         />
 
         {/* Visit Site Button */}
-        <TouchableOpacity className="flex-row items-center bg-[#3754ED]/10 px-4 py-3 rounded-xl mx-4 mt-6 mb-12">
+        <TouchableOpacity
+          className="flex-row items-center bg-[#3754ED]/10 px-4 py-3 rounded-xl mx-4 mt-6 mb-12"
+          style={{
+            marginBottom: insets.bottom + 100,
+          }}
+        >
           <Ionicons name="open-outline" size={18} color="#3754ED" />
           <Text className="ml-2 font-semibold text-[#3754ED]">Visit site</Text>
         </TouchableOpacity>
