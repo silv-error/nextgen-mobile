@@ -1,38 +1,48 @@
 import { Redirect, Tabs, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { View } from "react-native";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const TabIcon = ({ focused, icon }: any) => (
   <View
     className={`border-2 ${focused ? "border-white" : "border-transparent"} rounded-full w-14 h-14 items-center justify-center`}
     style={{ backgroundColor: focused ? "white" : "transparent" }}
   >
-    <Ionicons name={icon} size={22} color={focused ? "black" : "white"} />
+    <Ionicons name={icon} size={20} color={focused ? "black" : "white"} />
   </View>
 );
 
 export default function TabsLayout() {
   const router = useRouter();
   // Replace this with your actual authentication logic
-  const isAuthenticated = false; // Example: change to false to test redirection
+  const isAuthenticated = true; // Example: change to false to test redirection
   if (!isAuthenticated) {
     return <Redirect href={"/(auth)"} />;
   }
+  const insets = useSafeAreaInsets();
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: {
-          bottom: 20,
-          left: 20,
-          right: 20,
+          position: "absolute",
+          bottom: 20 + insets.bottom, // adjust for safe areas
+          marginHorizontal: 24,
+          alignSelf: "center", // center horizontally
           height: 70,
-          borderRadius: 100,
-          backgroundColor: "#080E29",
+          borderRadius: 35,
+          backgroundColor: "#00a8ff",
+          justifyContent: "center",
+          alignItems: "center",
           paddingBottom: 0,
-          width: "80%",
-          margin: "auto",
+          elevation: 5, // shadow Android
+          shadowColor: "#000", // shadow iOS
+          shadowOpacity: 0.1,
+          shadowOffset: { width: 0, height: 5 },
+          shadowRadius: 10,
         },
         tabBarItemStyle: {
           justifyContent: "center",
@@ -66,7 +76,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="suggestion"
         options={{
-          tabBarIcon: ({ focused }) => <TabIcon focused={focused} icon={"sparkles-outline"} />,
+          tabBarIcon: ({ focused }) => <TabIcon focused={focused} icon={"compass-outline"} />,
         }}
       />
 

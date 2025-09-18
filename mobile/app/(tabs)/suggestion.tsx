@@ -1,66 +1,84 @@
 import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import React from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function TravelPage() {
+  const insets = useSafeAreaInsets();
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <ScrollView showsVerticalScrollIndicator={false}>
+    <SafeAreaView className="flex-1 bg-white" style={{ paddingBottom: insets.bottom + 40 }}>
+      {/* Scrollable Page */}
+      <ScrollView showsVerticalScrollIndicator={false} className="bg-gray-50">
         {/* Header Image */}
-        <View className="relative w-full h-60">
+        <View className="relative w-full h-72">
           <Image source={{ uri: "https://picsum.photos/800/500" }} className="w-full h-full" />
+
           {/* Back Button */}
           <TouchableOpacity className="absolute top-12 left-4 bg-white/80 rounded-full p-2">
             <Ionicons name="arrow-back" size={22} color="#111" />
           </TouchableOpacity>
+
           {/* Heart Button */}
           <TouchableOpacity className="absolute top-12 right-4 bg-white/80 rounded-full p-2">
             <Ionicons name="heart-outline" size={22} color="#111" />
           </TouchableOpacity>
         </View>
 
-        {/* Content */}
-        <View className="px-5 mt-4">
+        {/* Content Card */}
+        <View className="bg-white -mt-8 rounded-t-3xl p-5 shadow-lg">
           {/* Title + Reviews */}
           <View className="flex-row justify-between items-start">
             <View className="flex-1 pr-3">
-              <Text className="text-2xl font-bold text-[#111]">Rio de Janeiro</Text>
-              <View className="flex-row items-center mt-1">
-                <View className="w-2 h-2 rounded-full bg-green-600 mr-2" />
-                <Text className="text-gray-500">Brazil</Text>
-              </View>
+              <Text className="text-2xl font-bold text-[#111]">Urban Apartment</Text>
+              <Text className="text-gray-500 mt-1">Toronto, Ontario</Text>
             </View>
             <View className="items-end">
               <View className="flex-row items-center">
                 <Ionicons name="star" size={16} color="#facc15" />
-                <Text className="ml-1 font-semibold">5.0</Text>
+                <Text className="ml-1 font-semibold">4.9</Text>
               </View>
-              <Text className="text-gray-500 text-xs">143 reviews</Text>
+              <Text className="text-gray-500 text-xs">120 reviews</Text>
             </View>
           </View>
 
           {/* Description */}
           <Text className="text-gray-600 mt-3">
-            Rio de Janeiro, often simply called Rio, is one of Brazil’s most iconic cities, renowned for its beaches,
-            Carnival, and breathtaking scenery.
+            This place is perfect for a big family. Here you will find all the facilities that an apartment should have.
+            And there's also some special facility that others don’t.{" "}
+            <Text className="text-[#3754ED] font-semibold">Read More</Text>
           </Text>
-          <Text className="mt-1 text-[#3754ED] font-semibold">Read more</Text>
 
-          {/* Upcoming Tours */}
-          <View className="flex-row justify-between items-center mt-6">
-            <Text className="text-lg font-bold text-[#111]">Upcoming tours</Text>
-            <TouchableOpacity>
-              <Text className="text-[#3754ED] font-semibold">See all</Text>
-            </TouchableOpacity>
+          {/* Facilities */}
+          <View className="flex-row justify-between mt-6">
+            <View className="items-center">
+              <Ionicons name="bed-outline" size={22} color="#111" />
+              <Text className="text-gray-600 text-sm mt-1">Bedroom</Text>
+            </View>
+            <View className="items-center">
+              <Ionicons name="water-outline" size={22} color="#111" />
+              <Text className="text-gray-600 text-sm mt-1">Bathroom</Text>
+            </View>
+            <View className="items-center">
+              <Ionicons name="wifi-outline" size={22} color="#111" />
+              <Text className="text-gray-600 text-sm mt-1">WiFi</Text>
+            </View>
           </View>
 
-          {/* Tour Cards */}
+          {/* Price + Button */}
+          <View className="flex-row justify-between items-center mt-8">
+            <Text className="text-lg font-bold text-[#111]">
+              $16.78k{"\n"}
+              <Text className="text-gray-500 text-sm">Per month with Tax</Text>
+            </Text>
+            <TouchableOpacity className="bg- px-8 py-3 rounded-full">
+              <Text className="text-white font-semibold text-base">Book Now</Text>
+            </TouchableOpacity>
+          </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mt-4">
             {/* Card 1 */}
             <View className="w-56 mr-4 bg-white rounded-2xl shadow-md">
               <View className="relative">
-                <Image source={{ uri: "https://picsum.photos/400/250" }} className="w-full h-36 rounded-t-2xl" />
+                <Image source={{ uri: "https://picsum.photos/500/250" }} className="w-full h-36 rounded-t-2xl" />
                 <TouchableOpacity className="absolute top-2 right-2 bg-white/80 rounded-full p-2">
                   <Ionicons name="heart-outline" size={18} color="#111" />
                 </TouchableOpacity>
@@ -79,7 +97,7 @@ export default function TravelPage() {
             {/* Card 2 */}
             <View className="w-56 mr-4 bg-white rounded-2xl shadow-md">
               <View className="relative">
-                <Image source={{ uri: "https://picsum.photos/400/251" }} className="w-full h-36 rounded-t-2xl" />
+                <Image source={{ uri: "https://picsum.photos/500/251" }} className="w-full h-36 rounded-t-2xl" />
                 <TouchableOpacity className="absolute top-2 right-2 bg-white/80 rounded-full p-2">
                   <Ionicons name="heart-outline" size={18} color="#111" />
                 </TouchableOpacity>

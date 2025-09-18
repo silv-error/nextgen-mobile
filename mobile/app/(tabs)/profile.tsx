@@ -3,10 +3,11 @@ import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ProfilePage() {
   const router = useRouter();
-
+  const insets = useSafeAreaInsets();
   const visitedPlaces = [
     {
       name: "Lisbon City Tour",
@@ -29,7 +30,7 @@ export default function ProfilePage() {
   ];
 
   return (
-    <View className="flex-1 relative">
+    <View className="flex-1 relative" style={{ paddingBottom: insets.bottom + 40 }}>
       <ScrollView
         className="flex-1 bg-[#F7FDFF] m-4 pt-10 rounded-3xl"
         scrollEnabled={true}
@@ -75,7 +76,7 @@ export default function ProfilePage() {
                 <Text className="text-gray-500 text-sm">{place.location}</Text>
                 <View className="flex-row justify-between items-center mt-3">
                   <Text className="text-gray-400 text-xs">{place.date}</Text>
-                  <TouchableOpacity className="bg-[#3754ED] px-3 py-1 rounded-full">
+                  <TouchableOpacity className="bg-[#0097e6] px-3 py-1 rounded-full">
                     <Text className="text-white text-sm font-medium">View</Text>
                   </TouchableOpacity>
                 </View>
