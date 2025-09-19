@@ -1,25 +1,59 @@
-import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
-import React from "react";
+import { View, Text, Image, ScrollView, TouchableOpacity, Modal, TextInput } from "react-native";
+import React, { useState } from "react";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { Navigation } from "lucide-react-native";
+import { Navigation, Send } from "lucide-react-native";
 
 export default function TravelPage() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { country } = useLocalSearchParams();
-  console.log("country", country);
+
+  // Feedback State
+  const [feedbacks, setFeedbacks] = useState([
+    {
+      avatar: "https://avatar.iran.liara.run/public/45",
+      fullName: "Maria Santos",
+      address: "Manila, Philippines",
+      stars: 5,
+      comment: "Amazing place, highly recommended!",
+      timestamp: "2",
+    },
+    {
+      avatar: "https://avatar.iran.liara.run/public/46",
+      fullName: "Juan Dela Cruz",
+      address: "Manila, Philippines",
+      stars: 4,
+      comment: "Great experience, but a bit pricey.",
+      timestamp: "4",
+    },
+  ]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [newComment, setNewComment] = useState("");
+  const [newStars, setNewStars] = useState(5);
+
+  const handleSubmit = () => {
+    if (!newComment.trim()) return;
+    setFeedbacks((prev) => [
+      {
+        avatar: "https://avatar.iran.liara.run/public/45", // or use a default or user avatar
+        fullName: "Anonymous", // or get from user profile
+        address: "Unknown", // or get from user profile
+        stars: newStars,
+        comment: newComment,
+        timestamp: "0", // or use a function to get current date/time
+      },
+      ...prev,
+    ]);
+    setNewComment("");
+    setNewStars(5);
+    setModalVisible(false);
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingBottom: insets.bottom + 80,
-        }}
-        className="bg-gray-50"
-      >
+      <ScrollView showsVerticalScrollIndicator={false} className="bg-gray-50 flex-1">
         {/* Header Image */}
         <View className="w-full h-72">
           <Image
@@ -27,10 +61,8 @@ export default function TravelPage() {
             className="w-full h-full rounded-b-3xl"
             resizeMode="cover"
           />
-
-          {/* Heart Button */}
-          <TouchableOpacity className="absolute top-12 right-4 bg-white/80 rounded-full p-2">
-            <Ionicons name="heart-outline" size={22} color="#111" />
+          <TouchableOpacity className="absolute top-12 right-4 bg-white/30 rounded-full p-2">
+            <Ionicons name="heart-outline" size={22} color="white" />
           </TouchableOpacity>
         </View>
 
@@ -101,7 +133,6 @@ export default function TravelPage() {
 
           {/* Activity Scroll */}
           <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mt-6">
-            {/* Card 1 */}
             <View className="w-56 mr-4 bg-white rounded-2xl shadow-md">
               <View className="relative">
                 <Image source={{ uri: "https://picsum.photos/500/250" }} className="w-full h-36 rounded-t-2xl" />
@@ -119,8 +150,6 @@ export default function TravelPage() {
                 </View>
               </View>
             </View>
-
-            {/* Card 2 */}
             <View className="w-56 mr-4 bg-white rounded-2xl shadow-md">
               <View className="relative">
                 <Image source={{ uri: "https://picsum.photos/500/251" }} className="w-full h-36 rounded-t-2xl" />
@@ -139,8 +168,89 @@ export default function TravelPage() {
               </View>
             </View>
           </ScrollView>
+
+          {/* Feedback Section */}
+          <View className="mt-10" style={{ paddingBottom: insets.bottom + 80 }}>
+            <View className="flex-row justify-between items-center mb-3">
+              <Text className="text-lg font-bold text-[#111]">Feedback</Text>
+              <TouchableOpacity className="px-4 py-2 flex-row items-center gap-1" onPress={() => setModalVisible(true)}>
+                <Send size={14} className="text-secondary" color={"#0097e6"} />
+                <Text className="text-secondary font-semibold text-sm">Send Feedback</Text>
+              </TouchableOpacity>
+            </View>
+
+            {feedbacks.map((fb, idx) => (
+              <View
+                key={idx}
+                className="bg-white rounded-2xl p-4 mb-4 shadow-sm"
+                style={{
+                  shadowColor: "#000",
+                  shadowOpacity: 0.05,
+                  shadowRadius: 4,
+                  shadowOffset: { width: 0, height: 2 },
+                }}
+              >
+                {/* User Info */}
+                <View className="flex-row items-center mb-3">
+                  <Image source={{ uri: fb.avatar }} className="w-10 h-10 rounded-full mr-3" />
+                  <View className="flex-1">
+                    <Text className="text-[#111827] font-semibold">{fb.fullName}</Text>
+                    <Text className="text-gray-500 text-xs">{fb.address}</Text>
+                  </View>
+                  <Text className="text-gray-400 text-xs">{fb.timestamp} days ago</Text>
+                </View>
+
+                {/* Stars */}
+                <View className="flex-row items-center mb-2">
+                  {Array.from({ length: fb.stars }).map((_, i) => (
+                    <Ionicons key={i} name="star" size={14} color="#facc15" />
+                  ))}
+                </View>
+
+                {/* Comment */}
+                <Text className="text-gray-500 leading-relaxed">{fb.comment}</Text>
+              </View>
+            ))}
+          </View>
         </View>
       </ScrollView>
+
+      {/* Feedback Modal */}
+      <Modal transparent animationType="slide" visible={modalVisible}>
+        <View className="flex-1 bg-black/50 justify-center items-center px-6">
+          <View className="bg-white rounded-2xl p-6 w-full max-w-md">
+            <Text className="text-lg font-bold text-[#111] mb-3">Leave Feedback</Text>
+
+            {/* Star Rating */}
+            <View className="flex-row mb-4">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <TouchableOpacity key={i} onPress={() => setNewStars(i + 1)} className="mr-1">
+                  <Ionicons name={i < newStars ? "star" : "star-outline"} size={24} color="#facc15" />
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            {/* Comment Input */}
+            <TextInput
+              value={newComment}
+              onChangeText={setNewComment}
+              placeholder="Write your feedback..."
+              className="border border-gray-300 rounded-lg px-3 py-2 mb-4"
+              multiline
+            />
+
+            {/* Buttons */}
+            <View className="flex-row justify-end gap-3">
+              <TouchableOpacity className="px-4 py-2" onPress={() => setModalVisible(false)}>
+                <Text className="text-gray-600 font-medium">Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity className="bg-blue-600 px-4 py-2 rounded-full" onPress={handleSubmit}>
+                <Text className="text-white font-semibold">Submit</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }

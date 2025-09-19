@@ -32,7 +32,7 @@ export default function TabsLayout() {
           bottom: 20 + insets.bottom, // adjust for safe areas
           marginHorizontal: 24,
           alignSelf: "center", // center horizontally
-          height: 70,
+          height: 68,
           borderRadius: 35,
           backgroundColor: "#00a8ff",
           justifyContent: "center",
