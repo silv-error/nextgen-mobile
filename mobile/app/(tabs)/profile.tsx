@@ -47,8 +47,8 @@ export default function ProfilePage() {
 
           <View className="flex-row justify-center items-center gap-8 mt-6 w-3/4">
             <View className="items-center border-r border-gray-300 pr-4">
-              <Text className="text-lg font-bold text-[#080E29]">112</Text>
-              <Text className="text-gray-500 text-sm">Following</Text>
+              <Text className="text-lg font-bold text-[#080E29]">{visitedPlaces?.length}</Text>
+              <Text className="text-gray-500 text-sm">Discoveries</Text>
             </View>
             <View className="items-center">
               <Text className="text-lg font-bold text-[#080E29]">627</Text>
@@ -61,16 +61,54 @@ export default function ProfilePage() {
         <View className="mt-10 mx-4 mb-20">
           <Text className="text-lg font-semibold text-[#131B62] mb-4">Visited Places</Text>
           {visitedPlaces.map((place, idx) => (
-            <View key={idx} className="bg-white rounded-2xl mb-5 shadow-md overflow-hidden">
-              <Image source={{ uri: place.image }} className="w-full h-40" />
-              <View className="p-4">
-                <Text className="text-lg font-semibold text-[#080E29]">{place.name}</Text>
-                <Text className="text-gray-500 text-sm">{place.location}</Text>
-                <View className="flex-row justify-between items-center mt-3">
-                  <Text className="text-gray-400 text-xs">{place.date}</Text>
-                  <TouchableOpacity className="bg-secondary px-3 py-1 rounded-full">
-                    <Text className="text-white text-sm font-medium">View</Text>
-                  </TouchableOpacity>
+            <View
+              key={idx}
+              className="rounded-3xl mb-6 overflow-hidden"
+              style={{
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.08,
+                shadowRadius: 6,
+                elevation: 2,
+              }}
+            >
+              {/* Image with overlay */}
+              <View className="relative">
+                <Image source={{ uri: place.image }} className="w-full h-56" />
+
+                {/* Gradient for text readability */}
+                <LinearGradient
+                  colors={["transparent", "rgba(0,0,0,0.6)"]}
+                  style={{
+                    position: "absolute",
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: "60%",
+                  }}
+                />
+
+                {/* Content on top of gradient */}
+                <View className="absolute bottom-0 left-0 right-0 p-4">
+                  <Text className="text-lg font-semibold text-white">{place.name}</Text>
+                  <Text className="text-gray-200 text-sm">{place.location}</Text>
+
+                  <View className="flex-row justify-between items-center mt-3">
+                    <Text className="text-gray-300 text-xs">{place.date}</Text>
+
+                    {/* iOS style button */}
+                    <TouchableOpacity
+                      className="bg-white/30 px-4 py-2 rounded-full"
+                      style={{
+                        shadowColor: "#000",
+                        shadowOpacity: 0.1,
+                        shadowOffset: { width: 0, height: 1 },
+                        shadowRadius: 2,
+                      }}
+                    >
+                      <Text className="text-slate-100 text-sm font-semibold">View</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </View>
             </View>
