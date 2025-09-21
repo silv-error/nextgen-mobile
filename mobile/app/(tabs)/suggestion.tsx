@@ -120,9 +120,9 @@ export default function TravelPage() {
                 router.push({
                   pathname: "/(tabs)/map",
                   params: {
-                    latitude: 35.6895,
-                    longitude: 139.6917,
-                    title: "New York City",
+                    latitude: 14.5547,
+                    longitude: 121.0244,
+                    title: "Makati City",
                     description: "The Big Apple",
                   },
                 })

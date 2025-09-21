@@ -10,7 +10,7 @@ export default function SuccessScreen() {
   useEffect(() => {
     animationRef.current?.play();
     const timer = setTimeout(() => {
-      router.push("/(tabs)");
+      router.push("/(boarding)/stageThree");
     }, 3000);
 
     return () => {

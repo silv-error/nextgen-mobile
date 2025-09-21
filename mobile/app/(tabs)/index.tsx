@@ -36,7 +36,7 @@ export default function HomeScreen() {
 
   const router = useRouter();
   const authUser = {
-    avatar: "https://i.pravatar.cc/100",
+    avatar: "https://avatar.iran.liara.run/public/45",
     name: "John Doe",
   };
 
