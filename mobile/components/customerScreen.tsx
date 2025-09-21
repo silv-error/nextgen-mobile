@@ -1,13 +1,18 @@
-import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
-import React from "react";
+import { View, Text, Image, TouchableOpacity, ScrollView, ActivityIndicator } from "react-native";
+import React, { useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { fetchUserProfile } from "../app/services/user/getAuthUser";
 
 export default function CustomerScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+
+  const [profile, setProfile] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
   const visitedPlaces = [
     {
       name: "Lisbon City Tour",
@@ -29,21 +34,54 @@ export default function CustomerScreen() {
     },
   ];
 
+  useEffect(() => {
+    async function loadProfile() {
+      try {
+        const data = await fetchUserProfile();
+        setProfile(data.profile);
+      } catch (err) {
+        console.error("Failed to fetch profile:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadProfile();
+  }, []);
+
+  if (loading) {
+    return (
+      <View className="flex-1 justify-center items-center bg-white">
+        <ActivityIndicator size="large" color="#3754ED" />
+      </View>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <View className="flex-1 justify-center items-center bg-white">
+        <Text className="text-lg text-gray-600">No profile found</Text>
+      </View>
+    );
+  }
+
   return (
     <View className="flex-1 relative" style={{ paddingBottom: insets.bottom + 40 }}>
-      <ScrollView
-        className="flex-1 bg-[#F7FDFF] m-4 pt-10 rounded-3xl"
-        scrollEnabled={true}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView className="flex-1 bg-[#F7FDFF] m-4 pt-10 rounded-3xl" showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View className="items-center mt-10">
           <View className="w-28 h-28 rounded-full items-center justify-center border-4 border-secondary shadow-md">
-            <Image source={{ uri: "https://avatar.iran.liara.run/public/45" }} className="w-24 h-24 rounded-full" />
+            <Image
+              source={{
+                uri: profile.avatar_url || "https://avatar.iran.liara.run/public/45",
+              }}
+              className="w-24 h-24 rounded-full"
+            />
           </View>
 
-          <Text className="text-xl font-semibold mt-4 text-[#131B62]">Lillie Brown</Text>
-          <Text className="text-[#3754ED] text-sm font-medium mt-1">🏆 Ambassador</Text>
+          <Text className="text-xl font-semibold mt-4 text-[#131B62]">{profile.full_name || "Traveler"}</Text>
+          <Text className="text-[#3754ED] text-sm font-medium mt-1">
+            {profile.approval_status === "approved" ? "✅ Verified" : "🌍 Explorer"}
+          </Text>
 
           <View className="flex-row justify-center items-center gap-8 mt-6 w-3/4">
             <View className="items-center border-r border-gray-300 pr-4">
@@ -76,7 +114,6 @@ export default function CustomerScreen() {
               <View className="relative">
                 <Image source={{ uri: place.image }} className="w-full h-56" />
 
-                {/* Gradient for text readability */}
                 <LinearGradient
                   colors={["transparent", "rgba(0,0,0,0.6)"]}
                   style={{
@@ -88,15 +125,12 @@ export default function CustomerScreen() {
                   }}
                 />
 
-                {/* Content on top of gradient */}
                 <View className="absolute bottom-0 left-0 right-0 p-4">
                   <Text className="text-lg font-semibold text-white">{place.name}</Text>
                   <Text className="text-gray-200 text-sm">{place.location}</Text>
 
                   <View className="flex-row justify-between items-center mt-3">
                     <Text className="text-gray-300 text-xs">{place.date}</Text>
-
-                    {/* iOS style button */}
                     <TouchableOpacity
                       className="bg-white/30 px-4 py-2 rounded-full"
                       style={{

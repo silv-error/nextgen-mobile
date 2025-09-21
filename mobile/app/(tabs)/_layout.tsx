@@ -4,6 +4,8 @@ import { View } from "react-native";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import useStore from "../store/authStore";
+import { useEffect, useState } from "react";
+import { restoreSession } from "../services/auth/useLogin";
 
 const TabIcon = ({ focused, icon }: any) => (
   <View
@@ -15,13 +17,20 @@ const TabIcon = ({ focused, icon }: any) => (
 );
 
 export default function TabsLayout() {
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
-  // Replace this with your actual authentication logic
-  // const isAuthenticated = true; // Example: change to false to test redirection
-  const { authUser } = useStore() as { authUser: any };
-  if (!authUser) {
-    return <Redirect href={"/(landing)"} />;
-  }
+
+  useEffect(() => {
+    (async () => {
+      const session = await restoreSession();
+      if (session) {
+        router.replace("/(tabs)"); // logged in
+      } else {
+        router.replace("/(auth)"); // not logged in
+      }
+      setLoading(false);
+    })();
+  }, []);
   const insets = useSafeAreaInsets();
 
   return (

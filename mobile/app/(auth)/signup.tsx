@@ -1,95 +1,141 @@
-import React, { useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from "react-native";
+import { useState } from "react";
+import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
+import { registerUser } from "../services/auth/useRegister";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function SignUpScreen() {
+export default function RegisterScreen() {
   const router = useRouter();
-  const [name, setName] = useState("");
+
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [userType, setUserType] = useState<"business" | "traveler" | "">("");
 
-  const handleSignUp = () => {
-    if (!name || !email || !password || !confirmPassword) {
-      Alert.alert("Missing Fields", "Please complete all fields.");
-      return;
+  const [businessName, setBusinessName] = useState("");
+  const [businessAddress, setBusinessAddress] = useState("");
+  const [fullName, setFullName] = useState("");
+
+  const handleRegister = async () => {
+    try {
+      const payload: any = { username, email, password, userType };
+
+      if (userType === "business") {
+        payload.businessData = { businessName, businessAddress };
+      } else if (userType === "traveler") {
+        payload.travelerData = { fullName };
+      }
+
+      await registerUser(payload);
+      Alert.alert("✅ Success", "Registration complete! Please check your email to confirm.");
+      router.replace("/(auth)");
+    } catch (error: any) {
+      Alert.alert("⚠️ Error", error.message || "Registration failed");
     }
-
-    if (password !== confirmPassword) {
-      Alert.alert("Password Mismatch", "Passwords do not match.");
-      return;
-    }
-
-    // ✅ If everything is good → proceed
-    Alert.alert("Success", "Account created successfully!");
-    router.push("/(auth)"); // redirect to login after signup
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <KeyboardAvoidingView
-        className="flex-1 px-6 justify-center"
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-      >
-        {/* Title */}
-        <View className="mb-10">
-          <Text className="text-3xl font-bold text-primary">Create Account 🎉</Text>
-          <Text className="text-gray-500 mt-2">Join us and get started</Text>
+    <SafeAreaView className="flex-1 bg-gray-50">
+      <View className="flex-1 justify-center p-6">
+        {/* Header */}
+        <Text className="text-3xl font-bold text-center mb-8 text-gray-800">Create Account</Text>
+
+        {/* Card container */}
+        <View className="bg-white rounded-2xl shadow-sm p-5 mb-6">
+          {/* Username */}
+          <Text className="text-gray-600 mb-1">Username</Text>
+          <TextInput
+            className="border border-gray-200 rounded-xl p-4 mb-4 bg-gray-50"
+            placeholder="Enter your username"
+            value={username}
+            onChangeText={setUsername}
+          />
+
+          {/* Email */}
+          <Text className="text-gray-600 mb-1">Email</Text>
+          <TextInput
+            className="border border-gray-200 rounded-xl p-4 mb-4 bg-gray-50"
+            placeholder="Enter your email"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            value={email}
+            onChangeText={setEmail}
+          />
+
+          {/* Password */}
+          <Text className="text-gray-600 mb-1">Password</Text>
+          <TextInput
+            className="border border-gray-200 rounded-xl p-4 mb-4 bg-gray-50"
+            placeholder="Enter your password"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
+
+          {/* User type */}
+          <Text className="text-gray-600 mb-3">Account Type</Text>
+          <View className="flex-row mb-4">
+            <TouchableOpacity
+              className={`flex-1 p-4 rounded-xl mr-2 ${userType === "business" ? "bg-blue-500" : "bg-gray-100"}`}
+              onPress={() => setUserType("business")}
+            >
+              <Text className={`text-center font-medium ${userType === "business" ? "text-white" : "text-gray-700"}`}>
+                Business
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              className={`flex-1 p-4 rounded-xl ${userType === "traveler" ? "bg-blue-500" : "bg-gray-100"}`}
+              onPress={() => setUserType("traveler")}
+            >
+              <Text className={`text-center font-medium ${userType === "traveler" ? "text-white" : "text-gray-700"}`}>
+                Traveler
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Conditional fields */}
+          {userType === "business" && (
+            <>
+              <Text className="text-gray-600 mb-1">Business Name</Text>
+              <TextInput
+                className="border border-gray-200 rounded-xl p-4 mb-4 bg-gray-50"
+                placeholder="Enter your business name"
+                value={businessName}
+                onChangeText={setBusinessName}
+              />
+              <Text className="text-gray-600 mb-1">Business Address</Text>
+              <TextInput
+                className="border border-gray-200 rounded-xl p-4 mb-4 bg-gray-50"
+                placeholder="Enter your business address"
+                value={businessAddress}
+                onChangeText={setBusinessAddress}
+              />
+            </>
+          )}
+
+          {userType === "traveler" && (
+            <>
+              <Text className="text-gray-600 mb-1">Full Name</Text>
+              <TextInput
+                className="border border-gray-200 rounded-xl p-4 mb-4 bg-gray-50"
+                placeholder="Enter your full name"
+                value={fullName}
+                onChangeText={setFullName}
+              />
+            </>
+          )}
         </View>
 
-        {/* Full Name */}
-        <TextInput
-          placeholder="Full Name"
-          placeholderTextColor="#999"
-          value={name}
-          onChangeText={setName}
-          className="w-full border border-gray-300 rounded-xl px-4 py-3 mb-4 text-base"
-        />
-
-        {/* Email */}
-        <TextInput
-          placeholder="Email"
-          placeholderTextColor="#999"
-          value={email}
-          onChangeText={setEmail}
-          className="w-full border border-gray-300 rounded-xl px-4 py-3 mb-4 text-base"
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
-
-        {/* Password */}
-        <TextInput
-          placeholder="Password"
-          placeholderTextColor="#999"
-          value={password}
-          onChangeText={setPassword}
-          className="w-full border border-gray-300 rounded-xl px-4 py-3 mb-4 text-base"
-          secureTextEntry
-        />
-
-        {/* Confirm Password */}
-        <TextInput
-          placeholder="Confirm Password"
-          placeholderTextColor="#999"
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          className="w-full border border-gray-300 rounded-xl px-4 py-3 mb-6 text-base"
-          secureTextEntry
-        />
-
-        {/* Sign Up Button */}
-        <TouchableOpacity className="bg-primary py-4 rounded-full mb-4" onPress={handleSignUp}>
-          <Text className="text-white text-center font-semibold text-lg">Sign Up</Text>
+        {/* Register button */}
+        <TouchableOpacity className="bg-blue-500 p-5 rounded-2xl shadow-sm mb-4" onPress={handleRegister}>
+          <Text className="text-center text-white font-semibold text-lg">Sign Up</Text>
         </TouchableOpacity>
 
-        {/* Redirect to Login */}
-        <TouchableOpacity onPress={() => router.push("/(auth)")}>
-          <Text className="text-center text-gray-600">
-            Already have an account? <Text className="text-secondary font-semibold">Login</Text>
-          </Text>
+        {/* Switch to login */}
+        <TouchableOpacity onPress={() => router.replace("/(auth)")}>
+          <Text className="text-center text-blue-500 font-medium">Already have an account? Log in</Text>
         </TouchableOpacity>
-      </KeyboardAvoidingView>
+      </View>
     </SafeAreaView>
   );
 }
