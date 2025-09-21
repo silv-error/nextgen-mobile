@@ -17,7 +17,7 @@ const TabIcon = ({ focused, icon }: any) => (
 export default function TabsLayout() {
   const router = useRouter();
   // Replace this with your actual authentication logic
-  // const isAuthenticated = false; // Example: change to false to test redirection
+  // const isAuthenticated = true; // Example: change to false to test redirection
   const { authUser } = useStore() as { authUser: any };
   if (!authUser) {
     return <Redirect href={"/(landing)"} />;
