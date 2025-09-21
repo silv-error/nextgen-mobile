@@ -3,6 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { View } from "react-native";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import useStore from "../store/authStore";
 
 const TabIcon = ({ focused, icon }: any) => (
   <View
@@ -16,9 +17,10 @@ const TabIcon = ({ focused, icon }: any) => (
 export default function TabsLayout() {
   const router = useRouter();
   // Replace this with your actual authentication logic
-  const isAuthenticated = true; // Example: change to false to test redirection
-  if (!isAuthenticated) {
-    return <Redirect href={"/(auth)"} />;
+  // const isAuthenticated = false; // Example: change to false to test redirection
+  const { authUser } = useStore() as { authUser: any };
+  if (!authUser) {
+    return <Redirect href={"/(landing)"} />;
   }
   const insets = useSafeAreaInsets();
 
@@ -89,12 +91,12 @@ export default function TabsLayout() {
       />
 
       {/* Business Owner Page */}
-      <Tabs.Screen
+      {/* <Tabs.Screen
         name="business-owner"
         options={{
           tabBarIcon: ({ focused }) => <TabIcon focused={focused} icon={"storefront-outline"} />,
         }}
-      />
+      /> */}
 
       {/* Profile Page */}
       <Tabs.Screen

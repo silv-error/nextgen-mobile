@@ -1,5 +1,5 @@
-import { View, Text, Image, ScrollView, TextInput, TouchableOpacity, FlatList } from "react-native";
-import React, { useMemo, useState } from "react";
+import { View, Text, Image, ScrollView, TextInput, TouchableOpacity } from "react-native";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import Swiper from "react-native-deck-swiper";
@@ -14,29 +14,88 @@ export default function HomeScreen() {
         country: "Japan",
         city: "Tokyo",
         rating: "4.8",
-        reviews: 120,
+        reviews: "120",
       },
       {
         image: "https://picsum.photos/500/701",
         country: "Italy",
         city: "Rome",
         rating: "4.7",
-        reviews: 89,
+        reviews: "89",
       },
       {
         image: "https://picsum.photos/500/702",
         country: "USA",
         city: "New York",
         rating: "4.9",
-        reviews: 200,
+        reviews: "200",
       },
     ],
     []
   );
 
+  const router = useRouter();
+  const authUser = {
+    avatar: "https://i.pravatar.cc/100",
+    name: "John Doe",
+  };
+
   const [cards, setCards] = useState(trips);
   const [cardIndex, setCardIndex] = useState(0);
-  const router = useRouter();
+  const [active, setActive] = useState(0);
+  const swiperRef = useRef(null);
+
+  const renderCard = useCallback(
+    (item: { image: string; country: string; city: string; rating: string; reviews: string }, index: number) => {
+      if (!item) return null;
+      return (
+        <View className="w-full h-[420px] rounded-[20px] shadow-lg overflow-hidden">
+          {/* Full Image */}
+          <Image source={{ uri: item.image, cache: "force-cache" }} className="w-full h-full" resizeMode="cover" />
+
+          {/* Floating Heart */}
+          <TouchableOpacity className="absolute top-3 right-3 bg-white/30 rounded-full p-2">
+            <Ionicons name="heart-outline" size={25} color="white" />
+          </TouchableOpacity>
+
+          {/* Gradient + Info */}
+          <LinearGradient
+            colors={["transparent", "rgba(0,0,0,0.7)"]}
+            style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 200 }}
+          >
+            <View className="absolute bottom-0 p-4 w-full">
+              <Text className="text-white text-sm">{item.country}</Text>
+              <Text className="text-white text-lg font-bold">{item.city}</Text>
+              <View className="flex-row items-center mt-1">
+                <Ionicons name="star" size={14} color="#facc15" />
+                <Text className="text-white ml-1 text-sm">{item.rating}</Text>
+                <Text className="text-gray-300 ml-2 text-xs">{item.reviews} reviews</Text>
+              </View>
+
+              {/* Button */}
+              <TouchableOpacity
+                className="flex-row items-center h-14 bg-white/20 backdrop-blur-md rounded-full mt-3 shadow-md"
+                onPress={() => {
+                  router.push({
+                    pathname: "/(tabs)/suggestion",
+                    params: {
+                      country: item?.country,
+                    },
+                  });
+                }}
+              >
+                <Text className="text-white relative mx-auto font-semibold text-base">See more</Text>
+                <View className="bg-white/30 absolute flex justify-center items-center right-0 rounded-full p-1.5 h-14 w-14">
+                  <Ionicons name="chevron-forward" size={18} color="#fff" />
+                </View>
+              </TouchableOpacity>
+            </View>
+          </LinearGradient>
+        </View>
+      );
+    },
+    [router]
+  );
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -44,10 +103,10 @@ export default function HomeScreen() {
         {/* Header */}
         <View className="flex-row justify-between items-center mt-4">
           <View>
-            <Text className="text-lg font-semibold text-gray-800">Hello, Vanessa</Text>
-            <Text className="text-gray-500">Welcome to TripGlide</Text>
+            <Text className="text-lg font-semibold text-gray-800">Hello, {authUser?.name}</Text>
+            <Text className="text-gray-500">Welcome to Moodi</Text>
           </View>
-          <Image source={{ uri: "https://i.pravatar.cc/100" }} className="w-10 h-10 rounded-full" />
+          <Image source={{ uri: authUser?.avatar }} className="w-10 h-10 rounded-full" />
         </View>
 
         {/* Search Bar */}
@@ -84,67 +143,21 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </ScrollView>
 
-        {/* Trip Cards (Horizontal Scroll) */}
-
+        {/* Trip Cards (Swiper) */}
         <View className="h-[400px] -mt-10">
           <Swiper
+            ref={swiperRef}
             cards={cards}
-            cardIndex={cardIndex} // ✅ use state instead of hard-coded
-            onSwiped={(index) => setCardIndex(index + 1)}
-            onSwipedAll={() => console.log("All cards swiped!")}
+            // cardIndex={cardIndex}
+            onSwiped={(i) => setActive(i + 1)}
+            onSwipedAll={() => setActive(0)}
             stackSize={3}
             backgroundColor="transparent"
-            infinite={true} // loop cards
-            animateCardOpacity={false} // ✅ reduce glitch
+            animateCardOpacity={false}
             cardStyle={{ width: "90%", alignSelf: "center" }}
-            renderCard={(item) => {
-              if (!item) return null;
-              return (
-                <View className="w-full h-[420px] rounded-[20px] shadow-lg overflow-hidden">
-                  {/* Full Image */}
-                  <Image source={{ uri: item.image }} className="w-full h-full" resizeMode="cover" />
-
-                  {/* Floating Heart */}
-                  <TouchableOpacity className="absolute top-3 right-3 bg-white/30 rounded-full p-2">
-                    <Ionicons name="heart-outline" size={25} color="white" />
-                  </TouchableOpacity>
-
-                  {/* Gradient + Info */}
-                  <LinearGradient
-                    colors={["transparent", "rgba(0,0,0,0.7)"]}
-                    style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 200 }}
-                  >
-                    <View className="absolute bottom-0 p-4 w-full">
-                      <Text className="text-white text-sm">{item.country}</Text>
-                      <Text className="text-white text-lg font-bold">{item.city}</Text>
-                      <View className="flex-row items-center mt-1">
-                        <Ionicons name="star" size={14} color="#facc15" />
-                        <Text className="text-white ml-1 text-sm">{item.rating}</Text>
-                        <Text className="text-gray-300 ml-2 text-xs">{item.reviews} reviews</Text>
-                      </View>
-
-                      {/* Button */}
-                      <TouchableOpacity
-                        className="flex-row items-center h-14 bg-white/20 backdrop-blur-md rounded-full mt-3 shadow-md"
-                        onPress={() => {
-                          router.push({
-                            pathname: "/(tabs)/suggestion",
-                            params: {
-                              country: item?.country,
-                            },
-                          });
-                        }}
-                      >
-                        <Text className="text-white relative mx-auto font-semibold text-base">See more</Text>
-                        <View className="bg-white/30 absolute flex justify-center items-center right-0 rounded-full p-1.5 h-14 w-14">
-                          <Ionicons name="chevron-forward" size={18} color="#fff" />
-                        </View>
-                      </TouchableOpacity>
-                    </View>
-                  </LinearGradient>
-                </View>
-              );
-            }}
+            renderCard={renderCard}
+            verticalSwipe={false}
+            infinite={true}
           />
         </View>
       </ScrollView>
