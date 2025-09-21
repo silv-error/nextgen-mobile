@@ -107,11 +107,13 @@ export default function TravelPage() {
           </View>
 
           {/* Price + Button */}
+          {/* Business Info + Button */}
           <View className="flex-row justify-between items-center mt-8">
-            <Text className="text-lg font-bold text-[#111]">
-              $16.78k{"\n"}
-              <Text className="text-gray-500 text-sm">Per month with Tax</Text>
-            </Text>
+            <View>
+              <Text className="text-lg font-bold text-[#111]">Open Hours</Text>
+              <Text className="text-gray-500 text-sm">Mon - Sat: 9:00 AM - 8:00 PM</Text>
+              <Text className="text-gray-500 text-sm">Contact: (123) 456-7890</Text>
+            </View>
             <TouchableOpacity
               className="flex-row gap-2 bg-blue-600 px-6 py-3 rounded-full"
               onPress={() =>
@@ -216,7 +218,7 @@ export default function TravelPage() {
       </ScrollView>
 
       {/* Feedback Modal */}
-      <Modal transparent animationType="slide" visible={modalVisible}>
+      <Modal transparent animationType="none" visible={modalVisible}>
         <View className="flex-1 bg-black/50 justify-center items-center px-6">
           <View className="bg-white rounded-2xl p-6 w-full max-w-md">
             <Text className="text-lg font-bold text-[#111] mb-3">Leave Feedback</Text>
