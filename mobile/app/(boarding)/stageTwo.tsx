@@ -12,7 +12,7 @@ export default function StageTwo() {
   const router = useRouter();
   const [selectedActivities, setSelectedActivities] = useState<string[]>([]);
   const [selectedCompanion, setSelectedCompanion] = useState("");
-  const { setAuthUser } = useStore();
+  const { setAuthUser } = useStore() as { setAuthUser: any };
 
   const toggleActivity = (item: string) => {
     setSelectedActivities((prev) => (prev.includes(item) ? prev.filter((a) => a !== item) : [...prev, item]));

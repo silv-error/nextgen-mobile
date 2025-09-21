@@ -9,6 +9,13 @@ export default function SuccessScreen() {
 
   useEffect(() => {
     animationRef.current?.play();
+    const timer = setTimeout(() => {
+      router.push("/(tabs)");
+    }, 3000);
+
+    return () => {
+      clearTimeout(timer);
+    };
   }, []);
 
   return (
@@ -26,11 +33,9 @@ export default function SuccessScreen() {
       />
 
       {/* {/ Subtitle /} */}
-      <Text className="text-gray-600 text-center mt-4">You completed today’s recommendation</Text>
-
-      <TouchableOpacity className="bg-primary py-3 rounded-xl mt-10 w-full" onPress={() => router.replace("/(tabs)")}>
-        <Text className="text-center text-white font-semibold">Back to Home</Text>
-      </TouchableOpacity>
+      <Text className="text-gray-600 text-center mt-4">
+        We've successfully chosen a location based on your preference.
+      </Text>
     </View>
   );
 }
