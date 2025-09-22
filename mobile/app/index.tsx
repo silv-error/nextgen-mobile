@@ -18,7 +18,7 @@ export default function SplashScreen() {
       fadeOut.start(() => {
         // After fade completes, navigate
         console.log("are we running always");
-        router.push("/(boarding)/stageThree");
+        router.push("/(landing)");
       });
     }, 1500);
 

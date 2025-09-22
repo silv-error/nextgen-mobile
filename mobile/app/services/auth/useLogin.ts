@@ -1,8 +1,9 @@
+import useStore from "@/app/store/authStore";
 import supabase from "../../lib/supabase";
 import { saveSession } from "../storage";
 import { getSession, clearSession } from "../storage";
 
-export async function loginUser(email: string, password: string) {
+export async function loginUser(email: string, password: string, setAuthUser: (user: any) => void) {
   try {
     const {
       data: { session },
@@ -13,19 +14,22 @@ export async function loginUser(email: string, password: string) {
       throw new Error(error?.message || "Authentication failed");
     }
 
-    // 👤 Fetch profile
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("id, username, email, user_type, role")
       .eq("id", session.user.id)
-      .single();
+      .maybeSingle(); // safer than .single()
 
-    if (profileError || !profile) {
-      throw new Error("Profile not found");
+    if (profileError) {
+      throw new Error("Profile fetch error");
     }
 
-    // 🔐 Save tokens
     await saveSession(session);
+
+    if (profile) {
+      console.log("THE LOGGED IN USER IS", profile);
+      setAuthUser(profile);
+    }
 
     return { user: session.user, session, profile };
   } catch (err: any) {

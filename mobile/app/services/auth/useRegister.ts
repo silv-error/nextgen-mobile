@@ -1,27 +1,41 @@
 import supabase from "../../lib/supabase";
 
-export async function registerUser({ username, email, password, userType, businessData, travelerData }: any) {
+export async function registerUser({
+  username,
+  email,
+  password,
+  confirmPassword,
+  userType,
+  businessData,
+  travelerData,
+  fullName,
+}: any) {
   try {
     // Input validation
-    if (!username || !email || !password || !userType) {
+    if (!username || !email || !password || !confirmPassword || !userType) {
       throw new Error("Missing required fields");
+    }
+
+    if (password !== confirmPassword) {
+      throw new Error("Passwords do not match");
     }
 
     if (userType === "business" && (!businessData?.businessName || !businessData?.businessAddress)) {
       throw new Error("Business name and address are required");
     }
 
-    if (userType === "traveler" && !travelerData?.fullName) {
+    if (userType === "traveler" && !fullName) {
       throw new Error("Full name is required for travelers");
     }
 
-    // Sign up
+    // Sign up in Supabase
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
           username,
+          full_name: fullName,
           user_type: userType,
           role: userType === "business" ? "business" : "traveler",
           ...(userType === "business"
@@ -30,21 +44,18 @@ export async function registerUser({ username, email, password, userType, busine
                 business_address: businessData.businessAddress,
               }
             : {
-                full_name: travelerData.fullName,
+                full_name: fullName,
               }),
         },
       },
     });
 
-    if (authError) {
-      console.error("Supabase auth error:", authError.message);
-      throw new Error(authError.message);
-    }
+    if (authError) throw new Error(authError.message);
 
-    // Insert profile row (optional, only if RLS allows it)
+    // Insert profile row
     if (authData.user) {
       if (userType === "business") {
-        const { error: businessError } = await supabase.from("business_profiles").insert({
+        await supabase.from("business_profiles").insert({
           id: authData.user.id,
           business_name: businessData.businessName,
           business_address: businessData.businessAddress,
@@ -52,30 +63,19 @@ export async function registerUser({ username, email, password, userType, busine
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         });
-
-        if (businessError) {
-          console.error("Business profile error:", businessError.message);
-        }
       }
 
       if (userType === "traveler") {
-        const { error: travelerError } = await supabase.from("traveler_profiles").insert({
+        await supabase.from("traveler_profiles").insert({
           id: authData.user.id,
-          full_name: travelerData.fullName,
+          full_name: fullName,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         });
-
-        if (travelerError) {
-          console.error("Traveler profile error:", travelerError.message);
-        }
       }
     }
 
-    return {
-      message: "Registration successful",
-      user: authData.user,
-    };
+    return { message: "Registration successful", user: authData.user };
   } catch (err: any) {
     console.error("Registration error:", err.message);
     throw err;

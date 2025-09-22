@@ -12,7 +12,7 @@ const TabIcon = ({ focused, icon }: any) => (
     className={`border-2 ${focused ? "border-white" : "border-transparent"} rounded-full w-14 h-14 items-center justify-center`}
     style={{ backgroundColor: focused ? "white" : "transparent" }}
   >
-    <Ionicons name={icon} size={20} color={focused ? "black" : "white"} />
+    <Ionicons name={icon} size={20} color={focused ? "#00a8ff" : "black"} />
   </View>
 );
 
@@ -35,35 +35,45 @@ export default function TabsLayout() {
 
   return (
     <Tabs
+      // screenOptions={{
+      //   headerShown: false,
+      //   tabBarShowLabel: false,
+      //   tabBarStyle: {
+      //     position: "absolute",
+      //     bottom: 20 + insets.bottom, // adjust for safe areas
+      //     marginHorizontal: 24,
+      //     alignSelf: "center", // center horizontally
+      //     height: 68,
+      //     borderRadius: 35,
+      //     backgroundColor: "#00a8ff",
+      //     justifyContent: "center",
+      //     alignItems: "center",
+      //     paddingBottom: 0,
+      //     elevation: 5, // shadow Android
+      //     shadowColor: "#000", // shadow iOS
+      //     shadowOpacity: 0.1,
+      //     shadowOffset: { width: 0, height: 5 },
+      //     shadowRadius: 10,
+      //   },
+      //   tabBarItemStyle: {
+      //     justifyContent: "center",
+      //     alignItems: "center",
+      //   },
+      //   tabBarIconStyle: {
+      //     display: "flex",
+      //     alignItems: "center",
+      //     justifyContent: "center",
+      //     marginTop: 14,
+      //   },
+      // }}
       screenOptions={{
         headerShown: false,
-        tabBarShowLabel: false,
+        tabBarActiveTintColor: "#00a8ff",
+        tabBarInactiveTintColor: "gray",
         tabBarStyle: {
-          position: "absolute",
-          bottom: 20 + insets.bottom, // adjust for safe areas
-          marginHorizontal: 24,
-          alignSelf: "center", // center horizontally
-          height: 68,
-          borderRadius: 35,
-          backgroundColor: "#00a8ff",
-          justifyContent: "center",
-          alignItems: "center",
-          paddingBottom: 0,
-          elevation: 5, // shadow Android
-          shadowColor: "#000", // shadow iOS
-          shadowOpacity: 0.1,
-          shadowOffset: { width: 0, height: 5 },
-          shadowRadius: 10,
-        },
-        tabBarItemStyle: {
-          justifyContent: "center",
-          alignItems: "center",
-        },
-        tabBarIconStyle: {
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          marginTop: 14,
+          height: 60,
+          paddingBottom: 5,
+          paddingTop: 5,
         },
       }}
     >
@@ -71,6 +81,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
+          title: "Home",
           tabBarIcon: ({ focused }) => <TabIcon focused={focused} icon={"home-outline"} />,
         }}
       />
@@ -87,6 +98,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="suggestion"
         options={{
+          title: "Suggestions",
           tabBarIcon: ({ focused }) => <TabIcon focused={focused} icon={"compass-outline"} />,
         }}
       />
@@ -95,6 +107,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="map"
         options={{
+          title: "Map",
           tabBarIcon: ({ focused }) => <TabIcon focused={focused} icon={"map-outline"} />,
         }}
       />
@@ -111,6 +124,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="profile"
         options={{
+          title: "Profile",
           tabBarIcon: ({ focused }) => <TabIcon focused={focused} icon={"person-outline"} />,
         }}
       />

@@ -8,7 +8,7 @@ import { Navigation, Send } from "lucide-react-native";
 export default function TravelPage() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { country } = useLocalSearchParams();
+  const { image, country, city, rating, reviews } = useLocalSearchParams();
 
   // Feedback State
   const [feedbacks, setFeedbacks] = useState([
@@ -52,12 +52,12 @@ export default function TravelPage() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <View className="flex-1 bg-white">
       <ScrollView showsVerticalScrollIndicator={false} className="bg-gray-50 flex-1">
         {/* Header Image */}
         <View className="w-full h-72">
           <Image
-            source={{ uri: "https://picsum.photos/800/500" }}
+            source={{ uri: typeof image === "string" ? image : "https://picsum.photos/800/500" }}
             className="w-full h-full rounded-b-3xl"
             resizeMode="cover"
           />
@@ -72,14 +72,14 @@ export default function TravelPage() {
           <View className="flex-row justify-between items-start">
             <View className="flex-1 pr-3">
               <Text className="text-2xl font-bold text-[#111]">Urban Apartment</Text>
-              <Text className="text-gray-500 mt-1">Toronto, Ontario</Text>
+              <Text className="text-gray-500 mt-1">{country}</Text>
             </View>
             <View className="items-end">
               <View className="flex-row items-center">
                 <Ionicons name="star" size={16} color="#facc15" />
-                <Text className="ml-1 font-semibold">4.9</Text>
+                <Text className="ml-1 font-semibold">{rating}</Text>
               </View>
-              <Text className="text-gray-500 text-xs">120 reviews</Text>
+              <Text className="text-gray-500 text-xs">{reviews} reviews</Text>
             </View>
           </View>
 
@@ -172,7 +172,7 @@ export default function TravelPage() {
           </ScrollView>
 
           {/* Feedback Section */}
-          <View className="mt-10" style={{ paddingBottom: insets.bottom + 80 }}>
+          <View className="mt-10">
             <View className="flex-row justify-between items-center mb-3">
               <Text className="text-lg font-bold text-[#111]">Feedback</Text>
               <TouchableOpacity className="px-4 py-2 flex-row items-center gap-1" onPress={() => setModalVisible(true)}>
@@ -253,6 +253,6 @@ export default function TravelPage() {
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 }

@@ -4,12 +4,15 @@ import CustomerScreen from "@/components/customerScreen";
 import BusinessOwnerPage from "@/components/businessOwnerScreen";
 import supabase from "../lib/supabase";
 import { fetchUserProfile } from "../services/user/getAuthUser";
+import { fetchBusinessProfile } from "../services/user/getBusiness";
+import useStore from "../store/authStore";
 
 const Profile = () => {
   const [authUser, setAuthUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [userType, setUserType] = useState("");
 
+  const { authUser: storedUser } = useStore() as { authUser: any };
   useEffect(() => {
     (async () => {
       setLoading(true);
@@ -17,6 +20,10 @@ const Profile = () => {
       setAuthUser(profile);
       setUserType(userType);
       setLoading(false);
+      if (!profile) {
+        console.log("OUR AUTH USER", storedUser);
+        setAuthUser(storedUser);
+      }
     })();
   }, []);
 

@@ -1,34 +1,41 @@
-import { View, Text, Image, ScrollView, TouchableOpacity, Modal, TextInput, ActivityIndicator } from "react-native";
-import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  Modal,
+  TextInput,
+  ActivityIndicator,
+  Alert,
+} from "react-native";
+import React, { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
 import MasonryList from "@react-native-seoul/masonry-list";
-import { useRouter, useNavigation } from "expo-router";
-import { fetchUserProfile } from "../app/services/user/getAuthUser";
-import { fetchBusinessProfile } from "../app/services/user/getBusiness";
+import { useRouter } from "expo-router";
 import useStore from "@/app/store/authStore";
+
+import { logoutUser } from "../services/auth/useLogout";
 
 export default function BusinessOwnerPage() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
-  const navigation = useNavigation();
+  const { authUser, setAuthUser } = useStore() as { authUser: any; setAuthUser: (authUser: any) => void };
 
-  // Profile state
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
-  // Modal state
   const [editVisible, setEditVisible] = useState(false);
   const [tempName, setTempName] = useState("");
   const [tempUsername, setTempUsername] = useState("");
   const [tempBio, setTempBio] = useState("");
 
-  const { authUser } = useStore() as { authUser: {} };
-
   const openEdit = () => {
-    setTempName(profile?.full_name || "");
-    setTempUsername(profile?.username || "");
-    setTempBio(profile?.bio || "");
+    setTempName(profile?.full_name || "Jane Doe");
+    setTempUsername(profile?.username || "janedoe");
+    setTempBio(
+      profile?.bio || "Hi I’m Skye! 📍 Lisbon, Portugal based 📍 Travel + drone videographer ✈️ Follow my adventures!"
+    );
     setEditVisible(true);
   };
 
@@ -42,6 +49,16 @@ export default function BusinessOwnerPage() {
     setEditVisible(false);
   };
 
+  const handleLogout = async () => {
+    try {
+      const { success } = await logoutUser();
+      if (!success) Alert.alert("Logout failed", "Please try again...");
+      router.replace("/(landing)"); // navigate to login page
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
+  };
+
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center">
@@ -51,7 +68,7 @@ export default function BusinessOwnerPage() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F7FDFF]" style={{ paddingBottom: insets.bottom + 20 }}>
+    <SafeAreaView className="flex-1 bg-[#F7FDFF]">
       <ScrollView className="flex-1">
         {/* Cover Image */}
         <View className="w-full h-44">
@@ -68,93 +85,70 @@ export default function BusinessOwnerPage() {
           {/* Name + Buttons */}
           <View className="flex-row justify-between items-center mt-3">
             <View>
-              <Text className="text-xl font-bold text-[#131B62]">{profile?.full_name}</Text>
-              <Text className="text-[#3754ED]">@{authUser?.username}</Text>
+              <Text className="text-xl font-bold text-[#131B62]">{tempName || "Jane Doe"}</Text>
+              <Text className="text-[#3754ED]">@{tempUsername || "janedoe"}</Text>
             </View>
+
             <View className="flex-row items-center gap-2">
               <TouchableOpacity
                 onPress={openEdit}
-                className="flex-row items-center gap-1 px-4 py-2.5 rounded-full bg-gray-100"
+                className="flex-row items-center gap-1 px-4 py-2.5 rounded-full bg-primary"
               >
-                <Ionicons name="create-outline" size={18} color="#131B62" />
-                <Text className="text-[#131B62] font-medium">Edit</Text>
+                <Ionicons name="create-outline" size={18} color="white" />
+                <Text className="text-white font-medium">Edit</Text>
               </TouchableOpacity>
 
+              {/* Logout Button */}
               <TouchableOpacity
-                onPress={() =>
-                  router.push({
-                    pathname: "/(tabs)/map",
-                    params: {
-                      latitude: 35.6895,
-                      longitude: 139.6917,
-                      title: "New York City",
-                      description: "The Big Apple",
-                    },
-                  })
-                }
-                className="flex-row items-center gap-2 justify-center bg-secondary px-5 py-2.5 rounded-full shadow-sm border border-white/60"
-                style={{
-                  shadowColor: "#000",
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.1,
-                  shadowRadius: 3,
-                }}
+                onPress={handleLogout}
+                className="flex-row items-center px-4 py-2.5 rounded-full bg-red-500"
               >
-                <Ionicons name="locate-outline" size={18} color="white" />
-                <Text className="text-white font-semibold text-sm">Directions</Text>
+                <Ionicons name="log-out-outline" size={18} color="white" />
+                {/* <Text className="text-white font-medium"></Text> */}
               </TouchableOpacity>
             </View>
           </View>
 
           {/* Bio */}
-          <Text className="mt-3 text-gray-600">{profile?.bio}</Text>
+          <Text className="mt-3 text-gray-600">
+            {tempBio ||
+              "Hi I’m Skye! 📍 Lisbon, Portugal based 📍 Travel + drone videographer ✈️ Follow my adventures!"}
+          </Text>
         </View>
 
         {/* Photos Grid */}
         <MasonryList
           style={{ marginTop: 24 }}
           contentContainerStyle={{ paddingHorizontal: 8 }}
-          data={
-            [
-              { uri: "https://picsum.photos/id/1015/400/600" },
-              { uri: "https://picsum.photos/id/1022/400/300" },
-              { uri: "https://picsum.photos/id/1036/400/500" },
-              { uri: "https://picsum.photos/id/1041/400/350" },
-              { uri: "https://picsum.photos/id/1050/400/450" },
-              { uri: "https://picsum.photos/id/1062/400/250" },
-            ] as { uri: string }[]
-          }
+          data={[
+            { uri: "https://picsum.photos/id/1015/400/600" },
+            { uri: "https://picsum.photos/id/1022/400/300" },
+            { uri: "https://picsum.photos/id/1036/400/500" },
+            { uri: "https://picsum.photos/id/1041/400/350" },
+            { uri: "https://picsum.photos/id/1050/400/450" },
+            { uri: "https://picsum.photos/id/1051/400/250" },
+            { uri: "https://picsum.photos/id/1063/400/550" },
+            { uri: "https://picsum.photos/id/1065/400/650" },
+            { uri: "https://picsum.photos/id/1066/400/750" },
+            { uri: "https://picsum.photos/id/1064/400/650" },
+          ]}
           keyExtractor={(item, index) => index.toString()}
           numColumns={2}
           showsVerticalScrollIndicator={false}
-          renderItem={({ item, i }: { item: unknown; i: number }) => {
-            const photo = item as { uri: string };
-            return (
-              <Image
-                source={{ uri: photo.uri }}
-                style={{
-                  flex: 1,
-                  marginHorizontal: 4,
-                  borderRadius: 4,
-                  marginBottom: 8,
-                  resizeMode: "cover",
-                  height: Math.floor(Math.random() * 120) + 180,
-                }}
-              />
-            );
-          }}
+          renderItem={({ item, i }) => (
+            <Image
+              source={{ uri: (item as { uri: string }).uri }}
+              style={{
+                flex: 1,
+                marginHorizontal: 4,
+                borderRadius: 4,
+                marginBottom: 8,
+                resizeMode: "cover",
+                height: Math.floor(Math.random() * 120) + 180,
+              }}
+            />
+          )}
         />
-
-        {/* Visit Site Button */}
-        <TouchableOpacity
-          className="flex-row items-center bg-[#3754ED]/10 px-4 py-3 rounded-xl mx-4 mt-6 mb-12"
-          style={{
-            marginBottom: insets.bottom + 100,
-          }}
-        >
-          <Ionicons name="open-outline" size={18} color="#3754ED" />
-          <Text className="ml-2 font-semibold text-[#3754ED]">Visit site</Text>
-        </TouchableOpacity>
       </ScrollView>
 
       {/* Edit Modal */}

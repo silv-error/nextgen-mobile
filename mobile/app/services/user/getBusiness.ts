@@ -8,11 +8,14 @@ export async function fetchBusinessProfile() {
       error: authError,
     } = await supabase.auth.getUser();
 
+    console.log("HELLO FIRST");
+
     if (authError || !user) {
       console.log("Auth error:", authError);
       return { error: "Unauthorized", profile: null };
     }
 
+    console.log("HELLO SECOND");
     const { data: profile, error: profileError } = await supabase
       .from("business_profiles")
       .select(
@@ -29,7 +32,7 @@ export async function fetchBusinessProfile() {
   `
       )
       .eq("id", user.id) // ✅ match business_profiles.id with auth.users.id
-      .single();
+      .maybeSingle();
 
     if (profileError) {
       console.log("Profile error:", profileError);
