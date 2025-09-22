@@ -82,7 +82,13 @@ export default function HomeScreen() {
       onPress={() =>
         router.push({
           pathname: "/(tabs)/suggestion",
-          params: { country: item.country },
+          params: {
+            image: item.image,
+            country: item.country,
+            city: item.city,
+            rating: item.rating,
+            reviews: item.reviews,
+          },
         })
       }
     >

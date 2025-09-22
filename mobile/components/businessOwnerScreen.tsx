@@ -25,25 +25,6 @@ export default function BusinessOwnerPage() {
 
   const { authUser } = useStore() as { authUser: {} };
 
-  // useEffect(() => {
-  //   async function loadProfile() {
-  //     try {
-  //       const { profile } = await fetchBusinessProfile();
-  //       console.log("this is the profile!", profile);
-  //       setProfile(profile);
-
-  //       // setTempName(profile?.full_name || "");
-  //       // setTempUsername(profile?.username || "");
-  //       // setTempBio(profile?.bio || "");
-  //     } catch (err) {
-  //       console.error("Error loading profile:", err);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   }
-  //   loadProfile();
-  // }, []);
-
   const openEdit = () => {
     setTempName(profile?.full_name || "");
     setTempUsername(profile?.username || "");
