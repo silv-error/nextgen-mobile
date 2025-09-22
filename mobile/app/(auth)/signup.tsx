@@ -2,7 +2,7 @@ import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { registerUser } from "../services/auth/useRegister";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -10,6 +10,7 @@ export default function RegisterScreen() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [userType, setUserType] = useState<"business" | "traveler" | "">("");
 
   const [businessName, setBusinessName] = useState("");
@@ -18,7 +19,12 @@ export default function RegisterScreen() {
 
   const handleRegister = async () => {
     try {
-      const payload: any = { username, email, password, userType };
+      if (password !== confirmPassword) {
+        Alert.alert("⚠️ Error", "Passwords do not match");
+        return;
+      }
+
+      const payload: any = { username, email, password, userType, confirmPassword, fullName };
 
       if (userType === "business") {
         payload.businessData = { businessName, businessAddress };
@@ -34,13 +40,13 @@ export default function RegisterScreen() {
     }
   };
 
+  const insets = useSafeAreaInsets();
+
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
+    <ScrollView className="flex-1 bg-gray-50" style={{ paddingTop: insets.top + 10 }}>
       <View className="flex-1 justify-center p-6">
-        {/* Header */}
         <Text className="text-3xl font-bold text-center mb-8 text-gray-800">Create Account</Text>
 
-        {/* Card container */}
         <View className="bg-white rounded-2xl shadow-sm p-5 mb-6">
           {/* Username */}
           <Text className="text-gray-600 mb-1">Username</Text>
@@ -50,6 +56,19 @@ export default function RegisterScreen() {
             value={username}
             onChangeText={setUsername}
           />
+
+          {/* Full Name (always visible now) */}
+          {userType === "traveler" && (
+            <>
+              <Text className="text-gray-600 mb-1">Full Name</Text>
+              <TextInput
+                className="border border-gray-200 rounded-xl p-4 mb-4 bg-gray-50"
+                placeholder="Enter your full name"
+                value={fullName}
+                onChangeText={setFullName}
+              />
+            </>
+          )}
 
           {/* Email */}
           <Text className="text-gray-600 mb-1">Email</Text>
@@ -70,6 +89,16 @@ export default function RegisterScreen() {
             secureTextEntry
             value={password}
             onChangeText={setPassword}
+          />
+
+          {/* Confirm Password */}
+          <Text className="text-gray-600 mb-1">Confirm Password</Text>
+          <TextInput
+            className="border border-gray-200 rounded-xl p-4 mb-4 bg-gray-50"
+            placeholder="Confirm your password"
+            secureTextEntry
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
           />
 
           {/* User type */}
@@ -112,30 +141,16 @@ export default function RegisterScreen() {
               />
             </>
           )}
-
-          {userType === "traveler" && (
-            <>
-              <Text className="text-gray-600 mb-1">Full Name</Text>
-              <TextInput
-                className="border border-gray-200 rounded-xl p-4 mb-4 bg-gray-50"
-                placeholder="Enter your full name"
-                value={fullName}
-                onChangeText={setFullName}
-              />
-            </>
-          )}
         </View>
 
-        {/* Register button */}
         <TouchableOpacity className="bg-blue-500 p-5 rounded-2xl shadow-sm mb-4" onPress={handleRegister}>
           <Text className="text-center text-white font-semibold text-lg">Sign Up</Text>
         </TouchableOpacity>
 
-        {/* Switch to login */}
         <TouchableOpacity onPress={() => router.replace("/(auth)")}>
           <Text className="text-center text-blue-500 font-medium">Already have an account? Log in</Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </ScrollView>
   );
 }

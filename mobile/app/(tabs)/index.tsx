@@ -1,8 +1,7 @@
-import { View, Text, Image, ScrollView, TextInput, TouchableOpacity } from "react-native";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import { View, Text, Image, ScrollView, TextInput, TouchableOpacity, FlatList } from "react-native";
+import React, { useMemo } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import Swiper from "react-native-deck-swiper";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 
@@ -30,71 +29,72 @@ export default function HomeScreen() {
         rating: "4.9",
         reviews: "200",
       },
+      {
+        image: "https://picsum.photos/500/703",
+        country: "France",
+        city: "Paris",
+        rating: "4.6",
+        reviews: "150",
+      },
+
+      {
+        image: "https://picsum.photos/500/704",
+        country: "USA",
+        city: "New York",
+        rating: "4.9",
+        reviews: "200",
+      },
+      {
+        image: "https://picsum.photos/500/705",
+        country: "France",
+        city: "Paris",
+        rating: "4.6",
+        reviews: "150",
+      },
+      {
+        image: "https://picsum.photos/500/706",
+        country: "USA",
+        city: "New York",
+        rating: "4.9",
+        reviews: "200",
+      },
+      {
+        image: "https://picsum.photos/500/707",
+        country: "France",
+        city: "Paris",
+        rating: "4.6",
+        reviews: "150",
+      },
     ],
     []
   );
 
   const router = useRouter();
   const authUser = {
-    avatar: "https://avatar.iran.liara.run/public/45",
+    avatar: "https://i.pravatar.cc/100",
     name: "John Doe",
   };
 
-  const [cards, setCards] = useState(trips);
-  const [cardIndex, setCardIndex] = useState(0);
-  const [active, setActive] = useState(0);
-  const swiperRef = useRef(null);
-
-  const renderCard = useCallback(
-    (item: { image: string; country: string; city: string; rating: string; reviews: string }, index: number) => {
-      if (!item) return null;
-      return (
-        <View className="w-full h-[420px] rounded-[20px] shadow-lg overflow-hidden">
-          {/* Full Image */}
-          <Image source={{ uri: item.image, cache: "force-cache" }} className="w-full h-full" resizeMode="cover" />
-
-          {/* Floating Heart */}
-          <TouchableOpacity className="absolute top-3 right-3 bg-white/30 rounded-full p-2">
-            <Ionicons name="heart-outline" size={25} color="white" />
-          </TouchableOpacity>
-
-          {/* Gradient + Info */}
-          <LinearGradient
-            colors={["transparent", "rgba(0,0,0,0.7)"]}
-            style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 200 }}
-          >
-            <View className="absolute bottom-0 p-4 w-full">
-              <Text className="text-white text-sm">{item.country}</Text>
-              <Text className="text-white text-lg font-bold">{item.city}</Text>
-              <View className="flex-row items-center mt-1">
-                <Ionicons name="star" size={14} color="#facc15" />
-                <Text className="text-white ml-1 text-sm">{item.rating}</Text>
-                <Text className="text-gray-300 ml-2 text-xs">{item.reviews} reviews</Text>
-              </View>
-
-              {/* Button */}
-              <TouchableOpacity
-                className="flex-row items-center h-14 bg-white/20 backdrop-blur-md rounded-full mt-3 shadow-md"
-                onPress={() => {
-                  router.push({
-                    pathname: "/(tabs)/suggestion",
-                    params: {
-                      country: item?.country,
-                    },
-                  });
-                }}
-              >
-                <Text className="text-white relative mx-auto font-semibold text-base">See more</Text>
-                <View className="bg-white/30 absolute flex justify-center items-center right-0 rounded-full p-1.5 h-14 w-14">
-                  <Ionicons name="chevron-forward" size={18} color="#fff" />
-                </View>
-              </TouchableOpacity>
-            </View>
-          </LinearGradient>
-        </View>
-      );
-    },
-    [router]
+  const renderTrip = ({ item }: any) => (
+    <TouchableOpacity
+      className="flex-1 m-1 rounded-2xl overflow-hidden"
+      style={{ aspectRatio: 0.8 }}
+      onPress={() =>
+        router.push({
+          pathname: "/(tabs)/suggestion",
+          params: { country: item.country },
+        })
+      }
+    >
+      <Image source={{ uri: item.image }} className="w-full h-full" resizeMode="cover" />
+      <LinearGradient
+        colors={["transparent", "rgba(0,0,0,0.6)"]}
+        style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: 8 }}
+      >
+        <Text className="text-white font-semibold">{item.city}</Text>
+        <Text className="text-white text-xs">{item.country}</Text>
+      </LinearGradient>
+    </TouchableOpacity>
   );
 
   return (
@@ -114,7 +114,7 @@ export default function HomeScreen() {
           <Ionicons name="search" size={20} color="#666" />
           <TextInput placeholder="Search" placeholderTextColor="#999" className="flex-1 ml-2 text-gray-700" />
           <TouchableOpacity className="bg-secondary rounded-full p-2">
-            <Ionicons name="options-outline" size={32} color="white" />
+            <Ionicons name="options-outline" size={20} color="white" />
           </TouchableOpacity>
         </View>
 
@@ -143,23 +143,15 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </ScrollView>
 
-        {/* Trip Cards (Swiper) */}
-        <View className="h-[400px] -mt-10">
-          <Swiper
-            ref={swiperRef}
-            cards={cards}
-            // cardIndex={cardIndex}
-            onSwiped={(i) => setActive(i + 1)}
-            onSwipedAll={() => setActive(0)}
-            stackSize={3}
-            backgroundColor="transparent"
-            animateCardOpacity={false}
-            cardStyle={{ width: "90%", alignSelf: "center" }}
-            renderCard={renderCard}
-            verticalSwipe={false}
-            infinite={true}
-          />
-        </View>
+        {/* Trip Grid (instead of swiper) */}
+        <FlatList
+          data={trips}
+          renderItem={renderTrip}
+          keyExtractor={(_, i) => i.toString()}
+          numColumns={2}
+          scrollEnabled={false}
+          contentContainerStyle={{ marginTop: 10, paddingBottom: 20 }}
+        />
       </ScrollView>
     </SafeAreaView>
   );

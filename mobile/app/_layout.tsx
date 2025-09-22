@@ -17,7 +17,6 @@ export default function RootLayout() {
     async function init() {
       const { data } = await supabase.auth.getSession();
       setSession(data.session ?? null);
-      console.log("currently loggedin: ", data);
       setLoading(false);
     }
     init();
@@ -38,7 +37,7 @@ export default function RootLayout() {
       if (!data.session) {
         return <Redirect href={"/(auth)"} />;
       } else {
-        return <Redirect href={"/(tabs)"} />;
+        return <Redirect href={"/(middleware)"} />;
       }
     };
   }, []);
@@ -47,6 +46,8 @@ export default function RootLayout() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />
       <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="(middleware)" />
+      <Stack.Screen name="(business)" />
       <Stack.Screen name="(landing)" />
       <Stack.Screen name="(auth)" />
     </Stack>

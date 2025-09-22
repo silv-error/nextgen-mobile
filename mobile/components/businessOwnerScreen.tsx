@@ -6,6 +6,7 @@ import MasonryList from "@react-native-seoul/masonry-list";
 import { useRouter, useNavigation } from "expo-router";
 import { fetchUserProfile } from "../app/services/user/getAuthUser";
 import { fetchBusinessProfile } from "../app/services/user/getBusiness";
+import useStore from "@/app/store/authStore";
 
 export default function BusinessOwnerPage() {
   const router = useRouter();
@@ -14,7 +15,7 @@ export default function BusinessOwnerPage() {
 
   // Profile state
   const [profile, setProfile] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   // Modal state
   const [editVisible, setEditVisible] = useState(false);
@@ -22,24 +23,26 @@ export default function BusinessOwnerPage() {
   const [tempUsername, setTempUsername] = useState("");
   const [tempBio, setTempBio] = useState("");
 
-  useEffect(() => {
-    async function loadProfile() {
-      try {
-        const { profile, userType, userRole, user } = await fetchUserProfile();
-        console.log("this is the profile!", profile);
-        setProfile(profile);
+  const { authUser } = useStore() as { authUser: {} };
 
-        // setTempName(profile?.full_name || "");
-        // setTempUsername(profile?.username || "");
-        // setTempBio(profile?.bio || "");
-      } catch (err) {
-        console.error("Error loading profile:", err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadProfile();
-  }, []);
+  // useEffect(() => {
+  //   async function loadProfile() {
+  //     try {
+  //       const { profile } = await fetchBusinessProfile();
+  //       console.log("this is the profile!", profile);
+  //       setProfile(profile);
+
+  //       // setTempName(profile?.full_name || "");
+  //       // setTempUsername(profile?.username || "");
+  //       // setTempBio(profile?.bio || "");
+  //     } catch (err) {
+  //       console.error("Error loading profile:", err);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   }
+  //   loadProfile();
+  // }, []);
 
   const openEdit = () => {
     setTempName(profile?.full_name || "");
@@ -85,7 +88,7 @@ export default function BusinessOwnerPage() {
           <View className="flex-row justify-between items-center mt-3">
             <View>
               <Text className="text-xl font-bold text-[#131B62]">{profile?.full_name}</Text>
-              <Text className="text-[#3754ED]">@{profile?.username}</Text>
+              <Text className="text-[#3754ED]">@{authUser?.username}</Text>
             </View>
             <View className="flex-row items-center gap-2">
               <TouchableOpacity

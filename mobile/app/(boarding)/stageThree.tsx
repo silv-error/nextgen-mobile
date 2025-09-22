@@ -1,17 +1,14 @@
-import React, { useMemo, useRef } from "react";
-import { View, Text, ImageBackground, TouchableOpacity, Dimensions, StyleSheet, Animated } from "react-native";
+import React, { useMemo } from "react";
+import { View, Text, ImageBackground, TouchableOpacity, Dimensions, StyleSheet } from "react-native";
 import Swiper from "react-native-swiper";
-import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-const { width } = Dimensions.get("window");
-const CARD_WIDTH = width * 0.75;
-const CARD_HEIGHT = 360;
+const { width, height } = Dimensions.get("window");
+const IMAGE_HEIGHT = height * 0.6;
 
 export default function TripsSwiper() {
   const router = useRouter();
-  const scrollX = useRef(new Animated.Value(1)).current;
 
   const trips = useMemo(
     () => [
@@ -44,101 +41,93 @@ export default function TripsSwiper() {
   );
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: " 50%" }}>
+    <View style={styles.container}>
+      {/* Swiper needs explicit height */}
       <Swiper
         loop={false}
-        showsPagination={true}
+        showsPagination
         activeDotColor="#3754ED"
         dotColor="rgba(0,0,0,0.2)"
-        containerStyle={{ height: CARD_HEIGHT + 90 }}
-        scrollEnabled={true}
+        style={{ height: height * 0.85 }}
+        containerStyle={{}}
+        removeClippedSubviews={false} // Fixes some rendering issues
       >
-        {trips.map((trip, index) => {
-          const inputRange = [(index - 1) * CARD_WIDTH, index * CARD_WIDTH, (index + 1) * CARD_WIDTH];
-          const scale = scrollX.interpolate({
-            inputRange,
-            outputRange: [0.9, 1, 0.9],
-            extrapolate: "clamp",
-          });
-
-          return (
-            <Animated.View key={index} style={[styles.cardContainer, { transform: [{ scale }] }]}>
-              <ImageBackground source={{ uri: trip.image }} style={styles.cardImage} imageStyle={{ borderRadius: 16 }}>
-                <LinearGradient colors={["transparent", "rgba(0,0,0,0.7)"]} style={styles.gradientOverlay}>
-                  <Text style={styles.cityText}>
-                    {trip.city}, {trip.country}
-                  </Text>
-                  <Text style={styles.ratingText}>
-                    ⭐ {trip.rating} ({trip.reviews} reviews)
-                  </Text>
-                  <Text style={styles.descText}>{trip.description}</Text>
-
-                  <TouchableOpacity onPress={() => router.push("/(tabs)")} style={styles.button}>
-                    <Ionicons name="arrow-forward-outline" size={18} color="#fff" />
-                    <Text style={styles.buttonText}>Go to Tabs</Text>
-                  </TouchableOpacity>
-                </LinearGradient>
-              </ImageBackground>
-            </Animated.View>
-          );
-        })}
+        {trips.map((trip, index) => (
+          <View key={index} style={styles.slide}>
+            <ImageBackground
+              source={{ uri: trip.image }}
+              style={styles.imageBackground}
+              imageStyle={{ borderBottomLeftRadius: 20, borderBottomRightRadius: 20 }}
+            />
+            <View style={styles.textContainer}>
+              <Text style={styles.cityText}>
+                {trip.city}, {trip.country}
+              </Text>
+              <Text style={styles.ratingText}>
+                ⭐ {trip.rating} ({trip.reviews} reviews)
+              </Text>
+              <Text style={styles.descText}>{trip.description}</Text>
+            </View>
+          </View>
+        ))}
       </Swiper>
+
+      <TouchableOpacity style={styles.getStartedButton} onPress={() => router.push("/(tabs)")} activeOpacity={0.8}>
+        <Text style={styles.getStartedText}>GET STARTED</Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  cardContainer: {
-    width: CARD_WIDTH,
-    height: CARD_HEIGHT,
-    borderRadius: 16,
-    overflow: "hidden",
-    shadowColor: "#000",
-    shadowOpacity: 0.3,
-    shadowOffset: { width: 0, height: 6 },
-    shadowRadius: 10,
-    elevation: 8,
-    alignSelf: "center",
-    marginHorizontal: 10,
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    justifyContent: "space-between",
   },
-  cardImage: {
-    width: "100%",
-    height: "100%",
-    justifyContent: "flex-end",
+  slide: {
+    flex: 1,
+    width: width,
   },
-  gradientOverlay: {
-    padding: 16,
-    borderRadius: 16,
+  imageBackground: {
+    width: width,
+    height: IMAGE_HEIGHT,
+  },
+  textContainer: {
+    backgroundColor: "#fff",
+    paddingHorizontal: 20,
+    paddingVertical: 16,
   },
   cityText: {
-    color: "#fff",
-    fontSize: 22,
+    fontSize: 26,
     fontWeight: "bold",
+    color: "#000",
   },
   ratingText: {
-    color: "#fff",
-    fontSize: 14,
+    fontSize: 16,
     marginTop: 4,
+    color: "#555",
   },
   descText: {
-    color: "#fff",
-    fontSize: 12,
-    marginTop: 8,
-  },
-  button: {
-    marginTop: 12,
-    backgroundColor: "#3754ED",
-    paddingVertical: 8,
-    paddingHorizontal: 14,
-    borderRadius: 25,
-    flexDirection: "row",
-    alignItems: "center",
-    alignSelf: "flex-start",
-  },
-  buttonText: {
-    color: "#fff",
-    fontWeight: "bold",
-    marginLeft: 6,
     fontSize: 14,
+    marginTop: 8,
+    color: "#777",
+  },
+  getStartedButton: {
+    marginHorizontal: 40,
+    marginBottom: 40,
+    paddingVertical: 16,
+    backgroundColor: "#007AFF",
+    borderRadius: 12,
+    alignItems: "center",
+    shadowColor: "#007AFF",
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 8,
+  },
+  getStartedText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });

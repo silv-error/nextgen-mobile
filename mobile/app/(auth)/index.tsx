@@ -3,12 +3,16 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from "react-native";
 import { useRouter } from "expo-router";
 import { loginUser } from "../services/auth/useLogin"; // 👈 our new function
+import useStore from "../store/authStore";
 
 export default function LoginScreen() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // ✅ Move this to the top level
+  const { setAuthUser, setUserType } = useStore();
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -18,12 +22,14 @@ export default function LoginScreen() {
 
     try {
       setLoading(true);
-      const { user, session, profile } = await loginUser(email, password);
-
+      const { user, session, profile } = await loginUser(email, password, setAuthUser);
       console.log("✅ Logged in:", { user, session, profile });
-
-      // 👉 Here you should store tokens securely (AsyncStorage or SecureStore)
-      // For now, just navigate
+      console.log("✅ user type", typeof profile?.user_type);
+      if (profile?.user_type === "business") {
+        setUserType("business");
+        return router.push("/(business)");
+      }
+      setUserType("traveler");
       router.push("/(boarding)");
     } catch (err: any) {
       Alert.alert("Login failed", err.message || "Unknown error");

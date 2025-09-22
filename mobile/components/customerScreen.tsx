@@ -1,14 +1,19 @@
-import { View, Text, Image, TouchableOpacity, ScrollView, ActivityIndicator } from "react-native";
+import { View, Text, Image, TouchableOpacity, ScrollView, ActivityIndicator, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { fetchUserProfile } from "../app/services/user/getAuthUser";
+import { logoutUser } from "../app/services/auth/useLogout";
+// If you use Zustand or AsyncStorage for auth, import them:
+// import useStore from "../store/useStore";
+// import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function CustomerScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  // const { setAuthUser } = useStore(); // Zustand if you use it
 
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -48,6 +53,24 @@ export default function CustomerScreen() {
     loadProfile();
   }, []);
 
+  const handleLogout = async () => {
+    try {
+      // Clear session/token if using AsyncStorage
+      // await AsyncStorage.removeItem("auth_token");
+
+      // Reset Zustand store
+      // setAuthUser(null);
+
+      const { success } = await logoutUser();
+      if (!success) Alert.alert("Failed to logout", "Please try again...");
+      Alert.alert("Logged out", "You have been successfully logged out.");
+      router.replace("/(landing)"); // Redirect to login page
+    } catch (err) {
+      console.error("Logout error:", err);
+      Alert.alert("Error", "Failed to log out. Please try again.");
+    }
+  };
+
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center bg-white">
@@ -65,9 +88,22 @@ export default function CustomerScreen() {
   }
 
   return (
-    <View className="flex-1 relative" style={{ paddingBottom: insets.bottom + 40 }}>
-      <ScrollView className="flex-1 bg-[#F7FDFF] m-4 pt-10 rounded-3xl" showsVerticalScrollIndicator={false}>
-        {/* Header */}
+    <View className="flex-1 relative">
+      <ScrollView
+        className="flex-1 bg-[#F7FDFF] m-4 pt-10 rounded-3xl"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 100 }}
+      >
+        {/* Header with logout */}
+        <View className="flex-row justify-between items-center px-4 mt-6">
+          <Text className="text-2xl font-bold text-[#131B62]">Profile</Text>
+          <TouchableOpacity onPress={handleLogout} className="bg-red-500 px-4 py-2 rounded-full flex-row items-center">
+            <Ionicons name="log-out-outline" size={18} color="#fff" />
+            <Text className="text-white ml-2 font-semibold">Logout</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Profile Info */}
         <View className="items-center mt-10">
           <View className="w-28 h-28 rounded-full items-center justify-center border-4 border-secondary shadow-md">
             <Image
@@ -96,7 +132,7 @@ export default function CustomerScreen() {
         </View>
 
         {/* History Cards */}
-        <View className="mt-10 mx-4 mb-20">
+        <View className="mt-10 mx-4">
           <Text className="text-lg font-semibold text-[#131B62] mb-4">Visited Places</Text>
           {visitedPlaces.map((place, idx) => (
             <View
@@ -110,7 +146,6 @@ export default function CustomerScreen() {
                 elevation: 2,
               }}
             >
-              {/* Image with overlay */}
               <View className="relative">
                 <Image source={{ uri: place.image }} className="w-full h-56" />
 
@@ -158,7 +193,7 @@ export default function CustomerScreen() {
           bottom: 0,
           left: 16,
           right: 16,
-          height: 60,
+          height: 40,
           borderBottomLeftRadius: 24,
           borderBottomRightRadius: 24,
         }}
